@@ -1,0 +1,12 @@
+name: Blocks
+version: '${project.version}'
+main: fr.mrtayai.blocks.Untitled
+api-version: 1.20
+author: MrTayai
+commands:
+  test:
+    description: Pour tester
+  test2:
+    description: Pour encore tester
+  test3:
+    description: Pour encore encore tester

@@ -1,6 +1,6 @@
 package fr.mrtayai.blocks.commands;
 
-import fr.mrtayai.blocks.Untitled;
+import fr.mrtayai.blocks.BlockMain;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class TestCommand implements CommandExecutor {
 
-    private Untitled untitled;
+    private BlockMain untitled;
 
-    public TestCommand (Untitled untitled){
+    public TestCommand (BlockMain untitled){
         this.untitled = untitled;
     }
 

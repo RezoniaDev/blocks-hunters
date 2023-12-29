@@ -1,11 +1,10 @@
 package fr.mrtayai.blocks.listeners;
 
-import fr.mrtayai.blocks.Untitled;
+import fr.mrtayai.blocks.BlockMain;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,10 +14,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ import java.util.List;
 import static java.lang.Math.ceil;
 
 public class GUIListeners implements Listener {
-    private Untitled untitled;
+    private BlockMain untitled;
 
     private List<ItemStack> potions = new ArrayList<>();
 
@@ -126,7 +123,11 @@ public class GUIListeners implements Listener {
 
     }
 
-    public GUIListeners(Untitled untitled){
+    public List<ItemStack> getItemsList(){
+        return this.items;
+    }
+
+    public GUIListeners(BlockMain untitled){
         this.untitled = untitled;
         this.importMaterial();
         this.addPotions();

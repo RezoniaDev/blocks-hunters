@@ -1,6 +1,7 @@
 package fr.mrtayai.blocks.state.waiting;
 
 import fr.mrtayai.blocks.BlockMain;
+import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.manager.Game;
 import fr.mrtayai.blocks.state.playing.GameManager;
@@ -10,6 +11,11 @@ import org.bukkit.Color;
 import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class WaitingManager {
 
@@ -22,11 +28,13 @@ public class WaitingManager {
 
     public WaitingManager(Game game){
         this.game = game;
+        this.game.setWaitingManager(this);
         this.scheduler = Bukkit.getScheduler();
         this.registerListeners();
         this.launchWaitingRunnable();
         this.gui = new TeamSelectionGUI(this.game);
         Team redTeam = new Team("red", Color.RED);
+        redTeam.setItemsToCollect(this.game.getMain().getItems());
         try {
             this.game.getTeamManager().addTeam(redTeam);
         } catch (Exception e) {
@@ -35,24 +43,27 @@ public class WaitingManager {
         TeamAreaUtils redTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 1000000, 20000, redTeam);
         this.game.getTeamsBases().add(redTeamUtils);
         Team greenTeam = new Team("green", Color.GREEN);
+        greenTeam.setItemsToCollect(this.game.getMain().getItems());
         try {
-            this.game.getTeamManager().addTeam(redTeam);
+            this.game.getTeamManager().addTeam(greenTeam);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         TeamAreaUtils greenTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), -20000, 1000000, 20000, greenTeam);
         this.game.getTeamsBases().add(greenTeamUtils);
         Team blueTeam = new Team("blue", Color.BLUE);
+        blueTeam.setItemsToCollect(this.game.getMain().getItems());
         try {
-            this.game.getTeamManager().addTeam(redTeam);
+            this.game.getTeamManager().addTeam(blueTeam);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         TeamAreaUtils blueTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 1000000, -20000, blueTeam);
         this.game.getTeamsBases().add(blueTeamUtils);
         Team yellowTeam = new Team("yellow", Color.YELLOW);
+        yellowTeam.setItemsToCollect(this.game.getMain().getItems());
         try {
-            this.game.getTeamManager().addTeam(redTeam);
+            this.game.getTeamManager().addTeam(yellowTeam);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -94,6 +105,17 @@ public class WaitingManager {
             }
         }
         new GameManager(this.game).start();
+        this.game.setPhase(GamePhase.GAME);
+    }
+
+    private void registerVillagers(){
+        Map<UUID, Team> villagers = new HashMap<>();
+        for(TeamAreaUtils base : this.game.getTeamsBases()){
+            for(UUID villager : base.getBase().getVillagersUUID()){
+                villagers.put(villager, base.getTeam());
+            }
+        }
+        this.game.setVillagers(villagers);
     }
 
     private void unregisterListeners(){

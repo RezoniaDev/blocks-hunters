@@ -115,9 +115,7 @@ public class GUIListeners implements Listener {
         for(String material : this.materials) {
             items.add(new ItemStack(Material.valueOf(material)));
         }
-        for(ItemStack potion : this.potions){
-            items.add(potion);
-        }
+        items.addAll(this.potions);
         this.items = items;
         this.numberItems = items.size();
 

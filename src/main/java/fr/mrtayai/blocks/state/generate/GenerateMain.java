@@ -1,7 +1,9 @@
 package fr.mrtayai.blocks.state.generate;
 
 import fr.mrtayai.blocks.BlockMain;
+import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.manager.Game;
+import fr.mrtayai.blocks.state.waiting.WaitingManager;
 import fr.mrtayai.blocks.structures.Lobby;
 import fr.mrtayai.blocks.utils.LobbyAreaUtils;
 import org.bukkit.Bukkit;
@@ -50,6 +52,9 @@ public class GenerateMain {
 
         stopListener();
         this.game.setLobby(this.lobbyUtils);
+        this.game.setPhase(GamePhase.WAITING);
+        WaitingManager manager = new WaitingManager(this.game);
+        this.game.setWaitingManager(manager);
     }
 
     private void startListener(){

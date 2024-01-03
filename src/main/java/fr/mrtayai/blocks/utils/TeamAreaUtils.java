@@ -28,5 +28,14 @@ public class TeamAreaUtils {
         return this.team;
     }
 
+    public Base getBase() {
+        return base;
+    }
+
+    public Area getArea() {return area;}
+
+    public Location getTeamSpawn() {
+        return teamSpawn;
+    }
 }
 

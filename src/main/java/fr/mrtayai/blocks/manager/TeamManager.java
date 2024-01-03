@@ -3,18 +3,23 @@ package fr.mrtayai.blocks.manager;
 import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.BlockPlayer;
 import fr.mrtayai.blocks.classes.Team;
+import fr.mrtayai.blocks.state.playing.ItemInventory;
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class TeamManager {
     private List<Team> teams;
-    private final BlockMain main;
+    private final Game game;
 
-    public TeamManager(BlockMain main){
-        this.main = main;
+    private Map<Team, ItemInventory> teamInventories;
+
+    public TeamManager(Game game){
+        this.game = game;
         this.teams = new LinkedList<>();
+        this.teamInventories = new HashMap<>();
     }
 
     public boolean isInATeam(BlockPlayer player){
@@ -113,6 +118,8 @@ public class TeamManager {
         for(Team team : teams){
             if(Objects.equals(team.getName(), teamName)){
                 this.teams.remove(team);
+                HandlerList.unregisterAll(this.teamInventories.get(team));
+                this.teamInventories.remove(team);
             }
         }
         throw new Exception("No team with the name isn't exists");
@@ -125,6 +132,29 @@ public class TeamManager {
            }
         }
         this.teams.add(team);
+        ItemInventory inventory = new ItemInventory(this.game, team);
+        Bukkit.getPluginManager().registerEvents(inventory, this.game.getMain());
+        this.teamInventories.put(team, new ItemInventory(this.game, team));
+    }
+
+    public boolean isCollected(ItemStack item, Team teamSearch){
+        for(Team team : this.teams){
+            if(team.getName().equals(teamSearch.getName())){
+                return team.getItemsCollected().contains(item);
+            }
+        }
+        return false;
+    }
+
+    public void setCollected(ItemStack item, Team teamSearch){
+        for(Team team : this.teams){
+            if(team.getName().equals(teamSearch.getName())){
+                team.setItemCollected(item);
+            }
+        }
+    }
+    public void openTeamInventory(BlockPlayer player){
+        this.teamInventories.get(this.getTeamPlayer(player)).openInventory(player);
     }
 
 }

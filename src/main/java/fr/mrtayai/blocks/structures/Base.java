@@ -1,5 +1,6 @@
 package fr.mrtayai.blocks.structures;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -212,7 +213,7 @@ public class Base extends Structure{
         villager1.setAdult();
         villager1.setVillagerType(Villager.Type.PLAINS);
         villager1.setInvulnerable(true);
-        villager1.setCustomName("Liste des items");
+        villager1.customName(Component.text("Liste des items"));
         this.villagersUUID.add(villager1.getUniqueId());
         Location villagerLoc2 = new Location(this.world, this.x + 1, this.y + 1, this.z + 3);
         Villager villager2 = (Villager) this.world.spawnEntity(villagerLoc1, EntityType.VILLAGER);
@@ -221,7 +222,11 @@ public class Base extends Structure{
         villager2.setAdult();
         villager2.setVillagerType(Villager.Type.PLAINS);
         villager2.setInvulnerable(true);
-        villager2.setCustomName("Don des items");
+        villager2.customName(Component.text("Don des items"));
         this.villagersUUID.add(villager2.getUniqueId());
+    }
+
+    public List<UUID> getVillagersUUID() {
+        return villagersUUID;
     }
 }

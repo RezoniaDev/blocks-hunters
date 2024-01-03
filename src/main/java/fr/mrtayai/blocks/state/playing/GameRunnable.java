@@ -6,9 +6,11 @@ import fr.mrtayai.blocks.manager.Game;
 public class GameRunnable implements Runnable{
 
     private Game game;
+    private GameManager gameManager;
 
-    public GameRunnable(Game game){
+    public GameRunnable(Game game, GameManager gameManager){
         this.game = game;
+        this.gameManager = gameManager;
     }
 
     @Override
@@ -17,7 +19,7 @@ public class GameRunnable implements Runnable{
 
         for(Team team : this.game.getTeamManager().getTeams()){
             if(team.getPercent() == 100){
-                stopGame();
+                this.gameManager.stop();
             }
         }
 

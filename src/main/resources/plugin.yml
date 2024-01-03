@@ -4,15 +4,22 @@ main: fr.mrtayai.blocks.BlockMain
 api-version: 1.20
 author: MrTayai
 commands:
-  test:
-    description: Affiche le menu test
-  test2:
-    description: Donne les informations sur l'item qu'on tient
-  test3:
-    description: Donne les potions pour tester
-  color:
-    description: Affiche le menu de couleur
+  base:
+    description: Permet de téléporter les joueurs à leur base
+  farm:
+    description: Permet de téléporter les joueurs à leur farm
+  start:
+    description: Permet de forcer le démarrage de la partie
+    permission: blocks.start
   team:
     description: Gestion des équipes
   t:
     description: Permet de parler avec les équipes
+
+  status:
+    description: Permet de voir l'état de la partie
+    permission: blocks.status
+
+  lobby:
+    description: Permet de se téléporter au lobby
+    permission: blocks.lobby

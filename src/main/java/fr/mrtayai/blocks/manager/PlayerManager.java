@@ -2,6 +2,7 @@ package fr.mrtayai.blocks.manager;
 
 import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.BlockPlayer;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Enumeration;
@@ -11,10 +12,10 @@ import java.util.UUID;
 public class PlayerManager {
 
     private HashMap<UUID, BlockPlayer> players;
-    private BlockMain main;
+    private Game game;
 
-    public PlayerManager(BlockMain main){
-        this.main = main;
+    public PlayerManager(Game game){
+        this.game = game;
         this.players = new HashMap<>();
     }
 
@@ -25,9 +26,6 @@ public class PlayerManager {
     }
 
     public BlockPlayer getBlockPlayer(Player player){
-        this.main.getLogger().info("Player : " + player.getName() + "\n");
-        this.main.getLogger().info("Player UUID : " + player.getUniqueId() + "\n");
-        this.main.getLogger().info("Players : " + this.players + "\n");
         return this.players.get(player.getUniqueId());
     }
 
@@ -53,4 +51,22 @@ public class PlayerManager {
     public BlockPlayer removePlayer(Player player) {
         return this.players.remove(player.getUniqueId());
     }
+
+
+    public void incrementBlock(BlockPlayer player){
+        this.players.get(player).incrementBlocksGiven();
+    }
+
+    public void incrementBlock(UUID uuid){
+        this.getBlockPlayer(uuid).incrementBlocksGiven();
+    }
+
+    public void changeLastLocation(BlockPlayer player, Location previousLocation){
+        for(BlockPlayer player1 : this.players.values()){
+            if(player1.getPlayerUUID().equals(player.getPlayerUUID())){
+                player1.setPreviousLocation(previousLocation);
+            }
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package fr.mrtayai.blocks.classes;
 
+import fr.mrtayai.blocks.state.playing.ItemInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -7,6 +8,7 @@ import org.bukkit.Color;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
@@ -27,6 +29,7 @@ public class Team {
         this.name = name;
         this.color = color;
         this.players = new LinkedList<>();
+
     }
 
     public String getName() {
@@ -84,6 +87,22 @@ public class Team {
 
     public double getPercent(){
         return ((double) this.itemsCollected.size() /this.itemsToCollect.size())*100;
+    }
+
+    public List<ItemStack> getItemsCollected() {
+        return itemsCollected;
+    }
+
+    public List<ItemStack> getItemsToCollect() {
+        return itemsToCollect;
+    }
+
+    private void createTeamInventories(){
+
+    }
+
+    private void changeItemInventory(){
+
     }
 
 }

@@ -3,6 +3,7 @@ package fr.mrtayai.blocks.commands;
 import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.classes.Team;
+import fr.mrtayai.blocks.manager.Game;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
@@ -13,15 +14,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class TeamTextCommand implements CommandExecutor {
 
-    private BlockMain main;
+    private Game game;
 
-    public TeamTextCommand(BlockMain main){
-        this.main = main;
+    public TeamTextCommand(Game game){
+        this.game = game;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if(this.main.getGamePhase().equals(GamePhase.GAME)){
+        if(this.game.getPhase().equals(GamePhase.GAME)){
             if(commandSender instanceof Player){
                 Player player = (Player) commandSender;
                 if(strings.length > 0){
@@ -29,7 +30,7 @@ public class TeamTextCommand implements CommandExecutor {
                     for(String string : strings){
                         message += string + " ";
                     }
-                    Team team = this.main.getTeamManager().getTeamPlayer(this.main.getPlayerManager().getBlockPlayer(player));
+                    Team team = this.game.getTeamManager().getTeamPlayer(this.game.getPlayerManager().getBlockPlayer(player));
                     if(team != null){
                         team.sendTeamMessage(Component.text(message, NamedTextColor.WHITE));
                     }else{

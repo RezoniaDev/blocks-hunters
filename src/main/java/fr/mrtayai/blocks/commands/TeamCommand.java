@@ -3,6 +3,7 @@ package fr.mrtayai.blocks.commands;
 import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.BlockPlayer;
 import fr.mrtayai.blocks.classes.Team;
+import fr.mrtayai.blocks.manager.Game;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
@@ -17,7 +18,7 @@ import java.util.Objects;
 
 public class TeamCommand implements CommandExecutor {
 
-    private final BlockMain main;
+    private final Game game;
 
     /*
     Permissions :
@@ -30,8 +31,8 @@ public class TeamCommand implements CommandExecutor {
     "blocks.team.remove"
      */
 
-    public TeamCommand(BlockMain main){
-        this.main = main;
+    public TeamCommand(Game game){
+        this.game = game;
     }
 
 
@@ -39,7 +40,7 @@ public class TeamCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if(sender instanceof Player){
             Player player = (Player) sender;
-            BlockPlayer blockPlayer = this.main.getPlayerManager().getBlockPlayer(player);
+            BlockPlayer blockPlayer = this.game.getPlayerManager().getBlockPlayer(player);
             StringBuilder arg = new StringBuilder();
             for(String s : args){
                 arg.append(s+"@");
@@ -54,10 +55,10 @@ public class TeamCommand implements CommandExecutor {
                 Component message = Component.text("=========[Blocks]=========", NamedTextColor.RED);
                 message = message.append(Component.newline());
                 message = message.append(Component.text("Liste des équipes : \n"));
-                if(this.main.getTeamManager().getTeams().isEmpty()){
+                if(this.game.getTeamManager().getTeams().isEmpty()){
                     message = message.append(Component.text("Aucune équipe n'a été créée.", NamedTextColor.RED));
                 }else {
-                    for (Team team : this.main.getTeamManager().getTeams()) {
+                    for (Team team : this.game.getTeamManager().getTeams()) {
                         message = message.append(Component.text(String.format("- Nom : %s | Couleur : %s\n", team.getName(), team.getColor().toString())));
                     }
                 }
@@ -74,7 +75,7 @@ public class TeamCommand implements CommandExecutor {
                 }
                 String teamName = args[1].toLowerCase(Locale.FRENCH);
                 try {
-                    this.main.getTeamManager().addPlayerToTeam(blockPlayer, teamName);
+                    this.game.getTeamManager().addPlayerToTeam(blockPlayer, teamName);
                     player.sendMessage(Component.text(String.format("[Blocks] Vous avez bien rejoint l'équipe %s", teamName)));
                     return true;
                 } catch (Exception e) {
@@ -91,10 +92,10 @@ public class TeamCommand implements CommandExecutor {
                     return true;
                 }
                 String playerName = args[1];
-                BlockPlayer blockPlayerTarget = this.main.getPlayerManager().getBlockPlayer(playerName);
+                BlockPlayer blockPlayerTarget = this.game.getPlayerManager().getBlockPlayer(playerName);
                 String teamName = args[2].toLowerCase(Locale.FRENCH);
                 try {
-                    this.main.getTeamManager().addPlayerToTeam(blockPlayerTarget, teamName);
+                    this.game.getTeamManager().addPlayerToTeam(blockPlayerTarget, teamName);
                     player.sendMessage("[Blocks] Le joueur %s a bien été ajouté à l'équipe %s", playerName, teamName);
                     return true;
                 } catch (Exception e) {
@@ -111,7 +112,7 @@ public class TeamCommand implements CommandExecutor {
                     return true;
                 }
                 try {
-                    this.main.getTeamManager().removePlayerToTeam(blockPlayer);
+                    this.game.getTeamManager().removePlayerToTeam(blockPlayer);
                     player.sendMessage(Component.text("[Blocks] Vous avez bien quitté votre équipe !"));
                     return true;
                 } catch (Exception e) {
@@ -128,9 +129,9 @@ public class TeamCommand implements CommandExecutor {
                         return true;
                     }
                     String playerName = args[1];
-                    BlockPlayer blockPlayerTarget = this.main.getPlayerManager().getBlockPlayer(playerName);
+                    BlockPlayer blockPlayerTarget = this.game.getPlayerManager().getBlockPlayer(playerName);
                     try {
-                        this.main.getTeamManager().removePlayerToTeam(blockPlayerTarget);
+                        this.game.getTeamManager().removePlayerToTeam(blockPlayerTarget);
                         player.sendMessage("[Blocks] Le joueur %s a bien été retiré de son équipe.", playerName);
                         return true;
                     } catch (Exception e) {
@@ -148,7 +149,7 @@ public class TeamCommand implements CommandExecutor {
                 }
                 String teamName = args[1].toLowerCase(Locale.FRENCH);
                 try {
-                    this.main.getTeamManager().removeTeam(teamName);
+                    this.game.getTeamManager().removeTeam(teamName);
                     player.sendMessage(Component.text(String.format("[Blocks] L'équipe %s a bien été supprimée !", teamName)));
                     return true;
                 } catch (Exception e) {
@@ -168,7 +169,7 @@ public class TeamCommand implements CommandExecutor {
                 Color color = getColorFromString(args[2].toLowerCase(Locale.FRENCH));
                 Team team = new Team(teamName, color);
                 try {
-                    this.main.getTeamManager().addTeam(team);
+                    this.game.getTeamManager().addTeam(team);
                     player.sendMessage(Component.text(String.format("[Blocks] L'équipe %s a bien été créée !", teamName)));
                     return true;
                 } catch (Exception e) {
@@ -183,7 +184,7 @@ public class TeamCommand implements CommandExecutor {
                     Component message = Component.text("=========[Blocks]=========", NamedTextColor.RED);
                     message = message.append(Component.newline());
                     message = message.append(Component.text("Liste des équipes : \n"));
-                    for (Team team : this.main.getTeamManager().getTeams()) {
+                    for (Team team : this.game.getTeamManager().getTeams()) {
                         message = message.append(Component.text(String.format("- Nom : %s | Couleur : %s\n", team.getName(), team.getColor().toString())));
                     }
                     sender.sendMessage(message);
@@ -194,10 +195,10 @@ public class TeamCommand implements CommandExecutor {
                         return true;
                     }
                     String playerName = args[1];
-                    BlockPlayer blockPlayerTarget = this.main.getPlayerManager().getBlockPlayer(playerName);
+                    BlockPlayer blockPlayerTarget = this.game.getPlayerManager().getBlockPlayer(playerName);
                     String teamName = args[2].toLowerCase(Locale.FRENCH);
                     try {
-                        this.main.getTeamManager().addPlayerToTeam(blockPlayerTarget, teamName);
+                        this.game.getTeamManager().addPlayerToTeam(blockPlayerTarget, teamName);
                         sender.sendMessage("[Blocks] Le joueur %s a bien été ajouté à l'équipe %s", playerName, teamName);
                         return true;
                     } catch (Exception e) {
@@ -210,9 +211,9 @@ public class TeamCommand implements CommandExecutor {
                         return true;
                     }
                     String playerName = args[1];
-                    BlockPlayer blockPlayerTarget = this.main.getPlayerManager().getBlockPlayer(playerName);
+                    BlockPlayer blockPlayerTarget = this.game.getPlayerManager().getBlockPlayer(playerName);
                     try {
-                        this.main.getTeamManager().removePlayerToTeam(blockPlayerTarget);
+                        this.game.getTeamManager().removePlayerToTeam(blockPlayerTarget);
                         sender.sendMessage("[Blocks] Le joueur %s a bien été retiré de son équipe.", playerName);
                         return true;
                     } catch (Exception e) {
@@ -226,7 +227,7 @@ public class TeamCommand implements CommandExecutor {
                     }
                     String teamName = args[1].toLowerCase(Locale.FRENCH);
                     try {
-                        this.main.getTeamManager().removeTeam(teamName);
+                        this.game.getTeamManager().removeTeam(teamName);
                         sender.sendMessage(Component.text(String.format("[Blocks] L'équipe %s a bien été supprimée !", teamName)));
                         return true;
                     } catch (Exception e) {
@@ -242,7 +243,7 @@ public class TeamCommand implements CommandExecutor {
                     Color color = getColorFromString(args[2].toLowerCase(Locale.FRENCH));
                     Team team = new Team(teamName, color);
                     try {
-                        this.main.getTeamManager().addTeam(team);
+                        this.game.getTeamManager().addTeam(team);
                         sender.sendMessage(Component.text(String.format("[Blocks] L'équipe %s a bien été créée !", teamName)));
                         return true;
                     } catch (Exception e) {
@@ -385,7 +386,7 @@ public class TeamCommand implements CommandExecutor {
     }
 
     private void log(String message){
-        this.main.getLogger().info(message);
+        this.game.getMain().getLogger().info(message);
     }
 
 }

@@ -7,6 +7,7 @@ import fr.mrtayai.blocks.manager.Game;
 import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,7 +18,9 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 public class WaitingListener implements Listener {
 
@@ -32,9 +35,21 @@ public class WaitingListener implements Listener {
         if(this.game.getPhase().equals(GamePhase.WAITING)) {
             this.game.getPlayerManager().addPlayer(event.getPlayer());
             event.getPlayer().teleport(this.game.getLobby().getLobbySpawnLoc());
+            event.getPlayer().setGameMode(GameMode.SURVIVAL);
             this.game.getScoreboardManager().addBoard(event.getPlayer());
             event.getPlayer().getInventory().clear();
+            event.getPlayer().addPotionEffect(this.game.getSaturation());
             event.getPlayer().getInventory().setItem(4, this.game.getWaitingManager().getTeamChooser());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event){
+        if(this.game.getPhase().equals(GamePhase.WAITING)){
+            this.game.getPlayerManager().removePlayer(event.getPlayer());
+            event.getPlayer().getInventory().clear();
+            event.getPlayer().clearActivePotionEffects();
+            this.game.getScoreboardManager().removeBoard(event.getPlayer());
         }
     }
 

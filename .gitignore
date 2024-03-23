@@ -10,6 +10,8 @@
 .springBeans
 .sts4-cache
 
+script.ps1
+script.sh
 
 # Created by https://www.gitignore.io/api/git,java,maven,eclipse,windows
 

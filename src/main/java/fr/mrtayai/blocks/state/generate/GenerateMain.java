@@ -32,18 +32,6 @@ public class GenerateMain {
         startListener();
     }
 
-    public void startGenerate(){
-        Lobby lobby = new Lobby(0, 300, 0, this.world);
-        lobby.build();
-        this.lobbyUtils = new LobbyAreaUtils(lobby);
-
-        stopListener();
-        this.game.setLobby(this.lobbyUtils);
-        this.game.setPhase(GamePhase.WAITING);
-        WaitingManager manager = new WaitingManager(this.game);
-        this.game.setWaitingManager(manager);
-    }
-
     private void startListener(){
         this.listener = new GenerateListeners(this.game);
         Bukkit.getServer().getPluginManager().registerEvents(listener, this.game.getMain());
@@ -51,5 +39,12 @@ public class GenerateMain {
 
     private void stopListener(){
         HandlerList.unregisterAll(this.listener);
+    }
+
+    public void stopGenerate(){
+        this.stopListener();
+        this.game.setPhase(GamePhase.WAITING);
+        WaitingManager manager = new WaitingManager(this.game);
+        this.game.setWaitingManager(manager);
     }
 }

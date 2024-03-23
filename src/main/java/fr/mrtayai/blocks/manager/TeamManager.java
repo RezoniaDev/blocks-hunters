@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
+import javax.naming.Name;
 import java.util.*;
 
 public class TeamManager {
@@ -92,11 +93,13 @@ public class TeamManager {
                         if (team.getName().equals(teamPlayer.getName())) {
                             team.removePlayer(player);
                             changeColorInTab(null, player.getPlayer());
+                            changeDisplayName(null, player.getPlayer());
                         }
                     }else{
                         if(team.getName().equals(teamName)) {
                             team.addPlayer(player);
                             changeColorInTab(team, player.getPlayer());
+                            changeDisplayName(team, player.getPlayer());
                         }
                     }
                 }
@@ -105,6 +108,7 @@ public class TeamManager {
             for(Team team : this.teams){
                 if(Objects.equals(team.getName(), teamName)){
                     team.addPlayer(player);
+                    changeColorInTab(team, player.getPlayer());
                     changeColorInTab(team, player.getPlayer());
                     return;
                 }
@@ -211,6 +215,14 @@ public class TeamManager {
             player.playerListName(Component.text(player.getName()).color(NamedTextColor.WHITE));
         }else {
             player.playerListName(Component.text(player.getName()).color(team.getTextColor()));
+        }
+    }
+
+    private void changeDisplayName(Team team, Player player){
+        if(team == null){
+            player.displayName(Component.text(player.getName()).color(NamedTextColor.WHITE));
+        }else{
+            player.displayName(Component.text(player.getName()).color(team.getTextColor()));
         }
     }
 

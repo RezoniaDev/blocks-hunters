@@ -33,6 +33,10 @@ public class ScoreboardManager {
         this.boards.put(player.getUniqueId(), board);
     }
 
+    public void removeBoard(Player player){
+        this.boards.remove(player.getUniqueId());
+    }
+
     public void stop() {
         Bukkit.getScheduler().cancelTask(this.scoreboardRunnable);
     }

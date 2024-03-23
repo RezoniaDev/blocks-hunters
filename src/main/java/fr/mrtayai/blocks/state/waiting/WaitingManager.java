@@ -5,6 +5,8 @@ import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.gui.TeamInventory;
 import fr.mrtayai.blocks.manager.Game;
 import fr.mrtayai.blocks.state.playing.GameManager;
+import fr.mrtayai.blocks.structures.Lobby;
+import fr.mrtayai.blocks.utils.LobbyAreaUtils;
 import fr.mrtayai.blocks.utils.TeamAreaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -33,7 +35,13 @@ public class WaitingManager {
     public WaitingManager(Game game){
         this.game = game;
 
-        this.prepareWorlds();
+        Lobby lobby = new Lobby(0, 300, 0, Bukkit.getWorld("world"));
+        lobby.build();
+        this.game.loadChunks(lobby.getLocSpawn());
+        LobbyAreaUtils lobbyUtils = new LobbyAreaUtils(lobby);
+
+        this.game.setLobby(lobbyUtils);
+
         this.game.setWaitingManager(this);
         this.scheduler = Bukkit.getScheduler();
         this.registerListeners();
@@ -111,22 +119,6 @@ public class WaitingManager {
         this.game.prepareTeamBases();
         new GameManager(this.game).start();
         this.game.setPhase(GamePhase.GAME);
-
-    }
-
-    private void prepareWorlds(){
-        for(World world : Bukkit.getWorlds()){
-            Bukkit.getServer().unloadWorld(world, false);
-        }
-
-        File worldContainer = Bukkit.getWorldContainer();
-        new File(worldContainer, "world").delete();
-        new File(worldContainer, "world_nether").delete();
-        new File(worldContainer, "world_the_end").delete();
-
-        WorldCreator.name("world").createWorld();
-        WorldCreator.name("world_nether").environment(World.Environment.NETHER).createWorld();
-        WorldCreator.name("world_the_end").environment(World.Environment.THE_END).createWorld();
 
     }
 

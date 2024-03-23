@@ -12,6 +12,8 @@ import fr.mrtayai.blocks.classes.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 
 import java.util.*;
@@ -33,6 +35,10 @@ public class Game {
 
     private ScoreboardManager scoreboardManager;
 
+    private PotionEffect saturation;
+
+    private GenerateMain generationManager;
+
     private GamePhase phase;
 
 
@@ -44,12 +50,11 @@ public class Game {
         this.teamsVillagers = new HashMap<>();
         this.teamManager = new TeamManager(this);
         this.scoreboardManager = new ScoreboardManager(this);
+        this.saturation = new PotionEffect(PotionEffectType.SATURATION, 99999999, 99, false, false, false);
     }
 
     public void start(){
-        this.phase = GamePhase.GENERATION;
-        GenerateMain manager = new GenerateMain(this);
-        manager.startGenerate();
+        this.generationManager = new GenerateMain(this);
     }
 
     public GamePhase getPhase() {
@@ -170,5 +175,13 @@ public class Game {
                 Bukkit.getWorld("world").getChunkAt(xChunk+dx, zChunk+dz).load(true);
             }
         }
+    }
+
+    public PotionEffect getSaturation(){
+        return this.saturation;
+    }
+
+    public GenerateMain getGenerationManager() {
+        return generationManager;
     }
 }

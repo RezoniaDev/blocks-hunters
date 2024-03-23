@@ -36,6 +36,7 @@ public class GameManager {
         for(BlockPlayer player : this.game.getPlayerManager().getPlayers()){
             this.game.randomTeleport(player.getPlayer());
             player.getPlayer().getInventory().clear();
+            player.getPlayer().clearActivePotionEffects();
             player.setPreviousLocation(player.getPlayer().getLocation());
         }
     }

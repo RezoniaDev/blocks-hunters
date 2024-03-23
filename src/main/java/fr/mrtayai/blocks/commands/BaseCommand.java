@@ -8,6 +8,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class BaseCommand implements CommandExecutor {
@@ -27,6 +29,8 @@ public class BaseCommand implements CommandExecutor {
                     this.game.getPlayerManager().changeLastLocation(player, player.getPlayer().getLocation());
                 }
                 player.getPlayer().teleport(this.game.getTeamBase(player).getTeamSpawn());
+                this.game.loadChunks(player.getPlayer().getLocation());
+                player.getPlayer().addPotionEffect(this.game.getSaturation());
                 player.getPlayer().sendMessage(Component.text("[Blocks] Téléportation à la base"));
                 return true;
             }

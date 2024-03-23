@@ -4,6 +4,8 @@ import fr.mrtayai.blocks.commands.*;
 import fr.mrtayai.blocks.listeners.ItemProvider;
 import fr.mrtayai.blocks.manager.Game;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -58,8 +60,18 @@ public final class BlockMain extends JavaPlugin {
         getCommand("base").setExecutor(new BaseCommand(this.game));
         getCommand("farm").setExecutor(new FarmCommand(this.game));
         getCommand("status").setExecutor(new StatusCommand(this.game));
+        getCommand("coords").setExecutor(new CoordsCommand(this.game));
 
 
+    }
+
+    @Override
+    public void onLoad() {
+        Bukkit.unloadWorld("world", false);
+        File worldDirectory = Bukkit.getWorldContainer();
+        new File(worldDirectory, "world").delete();
+        new File(worldDirectory, "world_nether").delete();
+        new File(worldDirectory, "world_the_end").delete();
     }
 
     @Override

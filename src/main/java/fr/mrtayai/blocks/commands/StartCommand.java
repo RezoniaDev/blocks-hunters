@@ -1,8 +1,10 @@
 package fr.mrtayai.blocks.commands;
 
+import fr.mrtayai.blocks.classes.BlockPlayer;
 import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.manager.Game;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,6 +25,12 @@ public class StartCommand implements CommandExecutor {
             if (commandSender instanceof Player) {
                 Player player = (Player) commandSender;
                 if (player.hasPermission("blocks.start")) {
+                    for(BlockPlayer players : this.game.getPlayerManager().getPlayers()){
+                        if(this.game.getTeamManager().getTeamPlayer(players) == null){
+                            player.sendMessage(Component.text("[Blocks] Tous les joueurs n'ont pas d'équipes !").color(NamedTextColor.RED));
+                            return true;
+                        }
+                    }
                     this.game.forceStart();
                     player.getPlayer().sendMessage(Component.text("[Blocks] Début de la partie !"));
                     return true;

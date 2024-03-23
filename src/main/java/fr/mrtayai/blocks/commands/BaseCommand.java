@@ -23,16 +23,12 @@ public class BaseCommand implements CommandExecutor {
         if(game.getPhase().equals(GamePhase.GAME)) {
             if (commandSender instanceof Player) {
                 BlockPlayer player = this.game.getPlayerManager().getBlockPlayer((Player) commandSender);
-                if (this.game.getTeamBase(player).getArea().isInArea(player.getPlayer().getLocation())) {
-                    player.getPlayer().teleport(this.game.getTeamBase(player).getTeamSpawn());
-                    player.getPlayer().sendMessage(Component.text("[Blocks] Téléportation à la base"));
-                    return true;
-                }else{
+                if (!this.game.getTeamBase(player).getArea().isInArea(player.getPlayer().getLocation())) {
                     this.game.getPlayerManager().changeLastLocation(player, player.getPlayer().getLocation());
-                    player.getPlayer().teleport(this.game.getTeamBase(player).getTeamSpawn());
-                    player.getPlayer().sendMessage(Component.text("[Blocks] Téléportaiton à la base"));
-                    return true;
                 }
+                player.getPlayer().teleport(this.game.getTeamBase(player).getTeamSpawn());
+                player.getPlayer().sendMessage(Component.text("[Blocks] Téléportation à la base"));
+                return true;
             }
         }
         return true;

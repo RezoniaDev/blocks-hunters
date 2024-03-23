@@ -6,6 +6,10 @@ import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.manager.Game;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+
+import java.util.UUID;
+import java.util.logging.Level;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,6 +23,8 @@ import java.util.Objects;
 public class TeamCommand implements CommandExecutor {
 
     private final Game game;
+
+
 
     /*
     Permissions :
@@ -46,6 +52,10 @@ public class TeamCommand implements CommandExecutor {
                 arg.append(s+"@");
             }
             log(String.format("Args : %s | Args length %d", arg, args.length));
+            if(args.length == 0){
+                sender.sendMessage(getHelpMessage(blockPlayer, false));
+                return true;
+            }
             log(args[0]);
             if (Objects.equals(args[0], "list")) {
                 if( (!player.hasPermission("blocks.team.list")) || (!player.hasPermission("blocks.team.*"))) {
@@ -79,7 +89,7 @@ public class TeamCommand implements CommandExecutor {
                     player.sendMessage(Component.text(String.format("[Blocks] Vous avez bien rejoint l'équipe %s", teamName)));
                     return true;
                 } catch (Exception e) {
-                    player.sendMessage(Component.text(String.format("[Blocks] %s", e)));
+                    Bukkit.getLogger().log(Level.SEVERE, e.getMessage());
                     return true;
                 }
             } else if(Objects.equals(args[0], "add")){
@@ -99,7 +109,7 @@ public class TeamCommand implements CommandExecutor {
                     player.sendMessage("[Blocks] Le joueur %s a bien été ajouté à l'équipe %s", playerName, teamName);
                     return true;
                 } catch (Exception e) {
-                    sender.sendMessage(Component.text(String.format("[Blocks] %s", e), NamedTextColor.RED));
+                    Bukkit.getLogger().log(Level.SEVERE, e.getMessage());
                     return true;
                 }
             } else if(Objects.equals(args[0], "quit")) {
@@ -167,7 +177,7 @@ public class TeamCommand implements CommandExecutor {
                 }
                 String teamName = args[1].toLowerCase(Locale.FRENCH);
                 Color color = getColorFromString(args[2].toLowerCase(Locale.FRENCH));
-                Team team = new Team(teamName, color);
+                Team team = new Team(teamName, teamName, color);
                 try {
                     this.game.getTeamManager().addTeam(team);
                     player.sendMessage(Component.text(String.format("[Blocks] L'équipe %s a bien été créée !", teamName)));
@@ -179,6 +189,10 @@ public class TeamCommand implements CommandExecutor {
             }
             sender.sendMessage(getHelpMessage(blockPlayer, false));
         }else{
+            if(args.length == 0){
+                sender.sendMessage(getHelpMessage(null, true));
+                return true;
+            }
             if(args.length >= 1) {
                 if (Objects.equals(args[0], "list")) {
                     Component message = Component.text("=========[Blocks]=========", NamedTextColor.RED);
@@ -241,7 +255,7 @@ public class TeamCommand implements CommandExecutor {
                     }
                     String teamName = args[1].toLowerCase(Locale.FRENCH);
                     Color color = getColorFromString(args[2].toLowerCase(Locale.FRENCH));
-                    Team team = new Team(teamName, color);
+                    Team team = new Team(teamName, teamName,color);
                     try {
                         this.game.getTeamManager().addTeam(team);
                         sender.sendMessage(Component.text(String.format("[Blocks] L'équipe %s a bien été créée !", teamName)));

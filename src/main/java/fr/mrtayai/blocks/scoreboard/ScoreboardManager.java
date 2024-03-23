@@ -3,6 +3,7 @@ package fr.mrtayai.blocks.scoreboard;
 import fr.mrmicky.fastboard.adventure.FastBoard;
 import fr.mrtayai.blocks.manager.Game;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
@@ -25,6 +26,11 @@ public class ScoreboardManager {
 
     public Map<UUID, FastBoard> getBoards() {
         return boards;
+    }
+
+    public void addBoard(Player player){
+        FastBoard board = new FastBoard(player);
+        this.boards.put(player.getUniqueId(), board);
     }
 
     public void stop() {

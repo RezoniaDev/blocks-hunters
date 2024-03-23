@@ -1,5 +1,6 @@
 package fr.mrtayai.blocks.utils;
 
+import fr.mrtayai.blocks.structures.Lobby;
 import org.bukkit.Location;
 
 public class LobbyAreaUtils {
@@ -7,9 +8,10 @@ public class LobbyAreaUtils {
     private Location lobbySpawnLoc;
     private Area area;
 
-    public LobbyAreaUtils(Location loc1, Location loc2, Location locSpawn){
-        this.area = new Area(loc1, loc2);
-        this.lobbySpawnLoc = locSpawn;
+    public LobbyAreaUtils(Lobby lobby){
+
+        this.area = new Area(lobby.getLoc1(), lobby.getLoc2());
+        this.lobbySpawnLoc = lobby.getLocSpawn();
     }
 
     public Area getArea() {

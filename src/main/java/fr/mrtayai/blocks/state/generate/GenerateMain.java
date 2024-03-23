@@ -28,27 +28,14 @@ public class GenerateMain {
 
     public GenerateMain(Game game){
         this.game = game;
+        this.world = this.game.getMain().getServer().getWorld("world");
+        startListener();
     }
 
     public void startGenerate(){
-
-        startListener();
-
-        String str = "";
-        if(Bukkit.getWorld(worldName1) != null){
-            str = worldName2;
-            deleteWorld(worldName1);
-        }else if(Bukkit.getWorld(worldName2) != null) {
-            str = worldName1;
-            deleteWorld(worldName2);
-        }
-        WorldCreator wc = new WorldCreator(str);
-        wc.environment(World.Environment.NORMAL);
-        this.world =  wc.createWorld();
-
-        Lobby lobby = new Lobby(0, 1000000, 0, this.world);
+        Lobby lobby = new Lobby(0, 300, 0, this.world);
         lobby.build();
-        this.lobbyUtils = new LobbyAreaUtils(new Location(this.world,0, 1000000, 0),new Location(this.world,8, 1000004, 8), new Location(this.world,4,  1000001, 4));
+        this.lobbyUtils = new LobbyAreaUtils(lobby);
 
         stopListener();
         this.game.setLobby(this.lobbyUtils);
@@ -64,33 +51,5 @@ public class GenerateMain {
 
     private void stopListener(){
         HandlerList.unregisterAll(this.listener);
-    }
-
-    private void deleteWorld(String str){
-        World world1 = Bukkit.getWorld(str);
-
-        if(world1 == null){
-            return;
-        }
-
-        File worldFolder = new File(Bukkit.getServer().getWorldContainer(), str);
-        deleteWorld(worldFolder);
-
-    }
-
-    private void deleteWorld(File worldFolder){
-        if(worldFolder.exists()){
-            File[] files = worldFolder.listFiles();
-            if(files != null){
-                for(File file : files){
-                    if(file.isDirectory()) {
-                        deleteWorld(file);
-                    } else {
-                        file.delete();
-                    }
-                }
-            }
-        }
-        worldFolder.delete();
     }
 }

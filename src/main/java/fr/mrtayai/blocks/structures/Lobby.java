@@ -1,74 +1,93 @@
 package fr.mrtayai.blocks.structures;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 
 public class Lobby extends Structure{
 
+    private Location loc1;
+    private Location loc2;
+    private Location locSpawn;
+
     public Lobby(int x, int y, int z, World world1){
         this.x = x;
         this.y = y;
         this.z = z;
         this.world = world1;
+        this.loc1 = new Location(world1, x, y, z);
+        this.loc2 = new Location(world1, x + 8, y + 4, z + 8);
+        this.locSpawn = new Location(world1, x + 4, y + 1, z + 4);
     }
 
+    public Location getLoc1() {
+        return loc1;
+    }
+
+    public Location getLoc2() {
+        return loc2;
+    }
+
+    public Location getLocSpawn() {
+        return locSpawn;
+    }
+
+
     @Override
-    public void build(){
-        System.out.println("Lobby build");
+    public void build() {
         for(int dx = 0; dx < 9; dx++){
             for(int dz = 0; dz < 9; dz++){
-                if((dx == 1) || (dx == 7)){
-                    if(dz == 4){
-                        Location loc = new Location(this.world, this.x + dx, this.y, this.z + dz);
-                        loc.getBlock().setType(Material.GLOWSTONE);
-                        Bukkit.getServer().getWorld(this.world.getUID()).getBlockAt(loc).setType(Material.GLOWSTONE);
-                    }
-                }else if((dx == 2) || (dx == 6)){
-                    if((dz == 3) || (dz == 5)){
-                        Location loc = new Location(this.world, this.x + dx, this.y, this.z + dz);
-                        Bukkit.getServer().getWorld(this.world.getUID()).getBlockAt(loc).setType(Material.GLOWSTONE);
-                    }
-                } else if((dx == 3) || (dx == 5)){
-                    if((dz == 2) || (dz == 6)){
-                        Location loc = new Location(this.world, this.x + dx, this.y, this.z + dz);
-                        Bukkit.getServer().getWorld(this.world.getUID()).getBlockAt(loc).setType(Material.GLOWSTONE);
-                    }
-                } else if(dx == 4){
-                    if((dz == 1) || (dz == 7)){
-                        Location loc = new Location(this.world, this.x + dx, this.y, this.z + dz);
-                        Bukkit.getServer().getWorld(this.world.getUID()).getBlockAt(loc).setType(Material.GLOWSTONE);
-                    }
-                }
-                Location loc = new Location(this.world, this.x + dx, this.y, this.z +dz);
-                Bukkit.getServer().getWorld(this.world.getUID()).getBlockAt(loc).setType(Material.QUARTZ_BLOCK);
+                new Location(this.world, this.x, this.y, this.z + dz).getBlock().setType(Material.QUARTZ_BLOCK);
+                new Location(this.world, this.x + 8, this.y, this.z + dz).getBlock().setType(Material.QUARTZ_BLOCK);
+                new Location(this.world, this.x + dx, this.y, this.z).getBlock().setType(Material.QUARTZ_BLOCK);
+                new Location(this.world, this.x + dx, this.y, this.z + 8).getBlock().setType(Material.QUARTZ_BLOCK);
             }
         }
-        for(int dy = 0; dy < 3; dy++){
+
+        for(int dx = 1; dx < 8; dx++){
+            for(int dz = 1; dz < 8; dz++){
+                if(dx % 2 == 1){
+                    if(dz % 2 == 1){
+                        new Location(this.world, this.x + dx, this.y, this.z + dz).getBlock().setType(Material.GLOWSTONE);
+                    } else {
+                        new Location(this.world, this.x + dx, this.y, this.z + dz).getBlock().setType(Material.QUARTZ_BLOCK);
+                    }
+                } else {
+                    if(dz % 2 == 1){
+                        new Location(this.world, this.x + dx, this.y, this.z + dz).getBlock().setType(Material.QUARTZ_BLOCK);
+                    } else {
+                        new Location(this.world, this.x + dx, this.y, this.z + dz).getBlock().setType(Material.GLOWSTONE);
+                    }
+                }
+            }
+        }
+
+        for(int dy = 1; dy < 4; dy++){
             for(int dx = 0; dx < 9; dx++){
                 for(int dz = 0; dz < 9; dz++){
-                    if((dx == 0 && dz == 0) || (dx == 0 && dz == 8) || (dx == 8 && dz == 0) || (dx == 8 && dz == 8)){
-                        Location loc = new Location(this.world, this.x + dx, this.y + dy, this.z + dz);
-                        Bukkit.getServer().getWorld(this.world.getUID()).getBlockAt(loc).setType(Material.QUARTZ_BLOCK);
+                    if(dx == 0 || dx == 8){
+                        if(dz == 0 || dz == 8){
+                            new Location(this.world, this.x + dx, this.y + dy, this.z + dz).getBlock().setType(Material.QUARTZ_BLOCK);
+                        } else {
+                            new Location(this.world, this.x + dx, this.y + dy, this.z + dz).getBlock().setType(Material.GLASS);
+                        }
                     }
-                    if((dx == 0) || (dx == 8)){
-                        Location loc = new Location(this.world, this.x + dx, this.y + dy, this.z + dz);
-                        Bukkit.getServer().getWorld(this.world.getUID()).getBlockAt(loc).setType(Material.GLASS);
+                    if(dz == 0 || dz == 8){
+                        if(dx == 0 || dx == 8){
+                            new Location(this.world, this.x + dx, this.y + dy, this.z + dz).getBlock().setType(Material.QUARTZ_BLOCK);
+                        } else {
+                            new Location(this.world, this.x + dx, this.y + dy, this.z + dz).getBlock().setType(Material.GLASS);
+                        }
                     }
-                    if((dz == 0) || (dz == 8)){
-                        Location loc = new Location(this.world, this.x + dx, this.y + dy, this.z + dz);
-                        Bukkit.getServer().getWorld(this.world.getUID()).getBlockAt(loc).setType(Material.GLASS);
-                    }
+
                 }
             }
         }
-        int dy = 4;
         for(int dx = 0; dx < 9; dx++){
-            for(int dz = 0; dz < 9; dz++) {
-                Location loc = new Location(this.world, this.x + dx, this.y + dy, this.z + dz);
-                Bukkit.getServer().getWorld(this.world.getUID()).getBlockAt(loc).setType(Material.QUARTZ_BLOCK);
+            for(int dz = 0; dz < 9; dz++){
+                new Location(this.world, this.x + dx, this.y + 4, this.z + dz).getBlock().setType(Material.QUARTZ_BLOCK);
             }
         }
     }
+
 }

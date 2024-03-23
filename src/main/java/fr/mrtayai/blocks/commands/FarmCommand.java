@@ -1,8 +1,10 @@
 package fr.mrtayai.blocks.commands;
 
 import fr.mrtayai.blocks.classes.BlockPlayer;
+import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.manager.Game;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,6 +23,10 @@ public class FarmCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(commandSender instanceof Player){
             BlockPlayer player = this.game.getPlayerManager().getBlockPlayer((Player) commandSender);
+            Team team = this.game.getTeamManager().getTeamPlayer(player);
+            if(team == null){
+                Bukkit.getLogger().log(java.util.logging.Level.SEVERE, "The player is not in a team");
+            }
             if(this.game.getTeamBase(player).getArea().isInArea(player.getPlayer().getLocation())) {
                 player.getPlayer().teleport(player.getPreviousLocation());
                 player.getPlayer().sendMessage(Component.text("[Blocks] Téléportation au farm"));

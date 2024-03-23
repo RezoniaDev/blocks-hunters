@@ -1,5 +1,6 @@
 package fr.mrtayai.blocks.structures;
 
+import fr.mrtayai.blocks.manager.Game;
 import org.bukkit.World;
 
 abstract class Structure {

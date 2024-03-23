@@ -1,20 +1,18 @@
 package fr.mrtayai.blocks;
 
-import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.commands.*;
-import fr.mrtayai.blocks.listeners.GUIListeners;
+import fr.mrtayai.blocks.listeners.ItemProvider;
 import fr.mrtayai.blocks.manager.Game;
-import fr.mrtayai.blocks.manager.PlayerManager;
-import fr.mrtayai.blocks.manager.TeamManager;
-import fr.mrtayai.blocks.state.generate.GenerateListeners;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.*;
 import java.util.List;
 
 public final class BlockMain extends JavaPlugin {
 
-    private GUIListeners gui;
+    private ItemProvider gui;
 
     private Game game;
 
@@ -22,12 +20,34 @@ public final class BlockMain extends JavaPlugin {
 
     @Override
     public void onEnable(){
-        System.out.println("Bonjour bitches");
+        Bukkit.getLogger().info("Bonjour les bitches");
 
-        this.gui = new GUIListeners(this);
+        File dataFolder = getDataFolder();
+        if(!dataFolder.exists()) dataFolder.mkdir();
+
+        saveDefaultConfig();
+
+        File itemFile = new File(dataFolder, "items.txt");
+        if(!itemFile.exists()){
+            try{
+                InputStream inputStream = getClassLoader().getResourceAsStream("items_list.txt");
+                OutputStream outputStream = new FileOutputStream(itemFile);
+                byte[] buffer = new byte[2048];
+                int length;
+                while((length = inputStream.read(buffer)) > 0){
+                    outputStream.write(buffer, 0, length);
+                }
+                outputStream.flush();
+                outputStream.close();
+                getLogger().info("Le fichier items.txt a été créé avec les items par défaut.");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        this.gui = new ItemProvider(this, itemFile);
 
         this.items = this.gui.getItemsList();
-
 
         this.game = new Game(this);
         this.game.start();
@@ -44,14 +64,18 @@ public final class BlockMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        System.out.println("Au revoir bitches");
+        Bukkit.getLogger().info("Au revoir les bitches");
     }
 
-    public GUIListeners getGUI(){
+    public ItemProvider getGUI(){
         return this.gui;
     }
 
     public List<ItemStack> getItems(){
         return this.items;
     }
+
+
+
+
 }

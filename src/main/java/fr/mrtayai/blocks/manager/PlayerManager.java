@@ -5,9 +5,7 @@ import fr.mrtayai.blocks.classes.BlockPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class PlayerManager {
 
@@ -69,4 +67,15 @@ public class PlayerManager {
         }
     }
 
+    public int getPlayerNumber() {
+        return this.players.size();
+    }
+
+    public List<BlockPlayer> getPlayers() {
+        List<BlockPlayer> players = new ArrayList<>();
+        for(BlockPlayer player : this.players.values()){
+            players.add(player);
+        }
+        return players;
+    }
 }

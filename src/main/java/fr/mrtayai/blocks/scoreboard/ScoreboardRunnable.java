@@ -14,6 +14,7 @@ import java.awt.*;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,6 +23,8 @@ public class ScoreboardRunnable implements Runnable {
     private Game game;
     private ScoreboardManager manager;
 
+    private int timer = 0;
+
     public ScoreboardRunnable(Game game, ScoreboardManager manager) {
         this.game = game;
         this.manager = manager;
@@ -29,11 +32,12 @@ public class ScoreboardRunnable implements Runnable {
 
     @Override
     public void run() {
-        int timer = 0;
+
         for(FastBoard board : this.manager.getBoards().values()){
-            if (this.game.getPhase() == GamePhase.WAITING) {
+            if (this.game.getPhase().equals(GamePhase.WAITING)) {
                 changeWaitingBoard(board);
-            } else if (this.game.getPhase() == GamePhase.GAME) {
+                timer=0;
+            } else if (this.game.getPhase().equals(GamePhase.GAME)) {
                 changeGameBoard(board, timer);
             }
         }
@@ -50,35 +54,85 @@ public class ScoreboardRunnable implements Runnable {
     private void changeWaitingBoard(FastBoard board){
         board.updateTitle(Component.text("Blocks", NamedTextColor.GOLD));
         Team team = this.game.getTeamManager().getTeamPlayer(this.game.getPlayerManager().getBlockPlayer(board.getPlayer()));
-
-        Component lines = Component.newline();
-        lines = lines.append(Component.text("Etat du jeu : En attente"));
-        lines = lines.append(Component.newline());
-        lines = lines.append(Component.text("Equipe actuelle : " + (team == null ? "Aucune" : team.getName())));
-        lines = lines.append(Component.newline());
-        lines = lines.append(Component.text("Nombre de joueurs : " + Bukkit.getServer().getOnlinePlayers()));
-        lines = lines.append(Component.newline());
-
-        board.updateLines(lines);
+        Component teamComponent = Component.text(team == null ? "Aucune" : team.getDisplayName());
+        if(team != null){
+            teamComponent = teamComponent.color(team.getTextColor());
+        }
+        board.updateLines(
+                Component.text(""),
+                Component.text("Etat du jeu : En attente"),
+                Component.text(""),
+                Component.text("Equipe actuelle : ").append(teamComponent),
+                Component.text(""),
+                Component.text("Nombre de joueurs : " + this.game.getPlayerManager().getPlayerNumber()),
+                Component.text("")
+        );
     }
 
     private void changeGameBoard(FastBoard board, int timer){
         BlockPlayer player = this.game.getPlayerManager().getBlockPlayer(board.getPlayer());
         Team team =this.game.getTeamManager().getTeamPlayer(player);
         board.updateTitle(Component.text("Blocks", NamedTextColor.GOLD));
+        board.updateLines(
+                Component.text(""),
+                Component.text("Etat du jeu : En jeu"),
+                Component.text(""),
+                Component.text("Durée de jeu : " + formatSecondsToHHMMSS(timer)),
+                Component.text(""),
+                Component.text("Pourcentage de blocs obtenus : " + String.format("%.2f", team.getPercent()) +"%"),
+                Component.text(""),
+                Component.text("Equipe actuelle : ").append(Component.text(this.game.getTeamManager().getTeamPlayer(player).getDisplayName()).color(team.getTextColor())),
+                Component.text(""),
+                Component.text("Nombre de joueurs : " + this.game.getPlayerManager().getPlayerNumber()),
+                Component.text("")
 
-        Component lines = Component.newline();
-        lines = lines.append(Component.text("Etat du jeu : En jeu"));
-        lines = lines.append(Component.newline());
-        lines = lines.append(Component.text("Durée de jeu : " + formatSecondsToHHMMSS(timer)));
-        lines = lines.append(Component.newline());
-        lines = lines.append(Component.text("Pourcentage de blocs obtenus : " + String.format("%.2f", team.getPercent()) +"%"));
-        lines = lines.append(Component.newline());
-        lines = lines.append(Component.text("Equipe actuelle : " + this.game.getTeamManager().getTeamPlayer(player).getName()));
-        lines = lines.append(Component.newline());
-        lines = lines.append(Component.text("Nombre de joueurs : " + Bukkit.getServer().getOnlinePlayers()));
-        lines = lines.append(Component.newline());
-        board.updateLines(lines);
+        );
     }
+
+    private void changeEndBoard(FastBoard board){
+        BlockPlayer player = this.game.getPlayerManager().getBlockPlayer(board.getPlayer());
+        Map<Double, UUID> scores = this.game.getTeamManager().getScorePerTeam();
+        board.updateTitle(Component.text("Blocks", NamedTextColor.GOLD));
+        ArrayList<Component> lines = new ArrayList<>();
+        lines.add(Component.text(""));
+        lines.add(Component.text("Etat du jeu : Fini"));
+        lines.add(Component.text(""));
+        lines.add(Component.text("Durée de jeu : " + formatSecondsToHHMMSS(this.game.getFinalTime())));
+        lines.add(Component.text(""));
+        ArrayList<Team> teams = new ArrayList<>();
+        for(UUID uuid : scores.values()){
+            teams.add(this.game.getTeamManager().getTeam(uuid));
+        }
+        for(int i = 0; i < teams.size(); i++){
+            Team team = teams.get(i);
+            if(i == 0){
+                Component text = Component.text("1er : ");
+                text.append(getTeamComponent(team));
+                lines.add(text);
+            }else if(i == 1){
+                Component text = Component.text("2nde : ");
+                text.append(getTeamComponent(team));
+                lines.add(text);
+            } else {
+                Component text = Component.text(i+1);
+                text.append(Component.text("eme : "));
+                text.append(getTeamComponent(team));
+                lines.add(text);
+            }
+            lines.add(Component.text(""));
+        }
+        board.updateLines(lines);
+
+    }
+
+    private Component getTeamComponent(Team team){
+        return Component.text("Equipe ")
+                .append(Component.text(team.getDisplayName()).color(team.getTextColor()))
+                .append(Component.text(" | Pourcentage : "))
+                .append(Component.text(team.getPercent()))
+                .append(Component.text(" %"));
+    }
+
+
 
 }

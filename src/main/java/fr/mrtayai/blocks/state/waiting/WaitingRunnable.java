@@ -17,6 +17,7 @@ public class WaitingRunnable implements Runnable{
     public void run() {
         int timer = 0;
 
+
         if(game.getPhase() == GamePhase.GAME){
             this.manager.stopWaitingState();
         }

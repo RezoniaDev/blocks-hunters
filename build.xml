@@ -1,0 +1,16 @@
+<project name="envoi-jar" default="envoi" basedir=".">
+    <target name="envoi">
+        <echo>Envoi du fichier JAR au serveur FTP</echo>
+        <ftp server="loulou"
+             userid="quentin"
+             password="Quentin26790*"
+             remoteDir="/home/quentin/test_server/plugins"
+             binary="yes"
+             passive="yes">
+            <fileset dir="${basedir}/target">
+                <include name="Blocks-1.0-SNAPSHOT.jar"/>
+
+            </fileset>
+        </ftp>
+    </target>
+</project>

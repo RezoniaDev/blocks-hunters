@@ -1,9 +1,14 @@
 package fr.mrtayai.blocks.structures;
 
+import fr.mrtayai.blocks.manager.Game;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 
@@ -14,24 +19,24 @@ import java.util.UUID;
 public class Base extends Structure{
 
 
-    private List<UUID> villagersUUID;
+    private UUID givenVillagerID;
+
+    private UUID listVillagerID;
+
     public Base(int x, int y, int z, World world){
         this.x = x;
         this.y = y;
         this.z = z;
         this.world = world;
-        this.villagersUUID = new ArrayList<>();
     }
 
     @Override
     public void build(){
         makeFloor(0);
-        for(int dy = 1; dy < 7; dy++){
-            makeWalls(dy);
-            if(dy < 6){
-                placeMainPiece(dy);
-            }
+        for(int i = 1; i < 5; i++){
+            placeMainPiece(i);
         }
+        makeWalls();
         makeFloor(6);
         placeLight();
         placeOtherThings();
@@ -47,101 +52,139 @@ public class Base extends Structure{
         }
     }
 
-    private void makeWalls(int dy){
+
+    private void makeWalls(){
+        for(int dy = 1; dy < 6; dy++){
+            makeWall(dy);
+            if(dy < 3){
+                place(6, dy, 8, Material.AIR);
+                place(7, dy, 8, Material.AIR);
+            }
+            if(dy < 6){
+                place(2, dy, 8, Material.BREWING_STAND);
+                place(3, dy, 8, Material.BREWING_STAND);
+            }
+        }
+    }
+    private void makeWall(int dy){
         for(int dx = 0; dx < 13; dx++){
             for(int dz = 0; dz < 20; dz++) {
                 if((dx == 0) || (dx == 12)) {
                     place(dx, dy, dz, Material.BEDROCK);
                 }
+
                 if((dz == 0) || (dz == 19)) {
                     place(dx, dy, dz, Material.BEDROCK);
                 }
             }
         }
         place(1, dy, 1, Material.BEDROCK);
-        place(1, dy, 1, Material.BEDROCK);
-        place(1, dy, 12, Material.BEDROCK);
-        place(1, dy, 13, Material.BEDROCK);
-        place(2, dy, 13, Material.BEDROCK);
-        place(3, dy, 13, Material.BEDROCK);
-        place(10, dy, 13, Material.BEDROCK);
-        place(11, dy, 13, Material.BEDROCK);
-
+        for(int dx = 1; dx < 12; dx++){
+            place(dx, dy, 8, Material.BEDROCK);
+        }
+        place(1, dy, 18, Material.BEDROCK);
+        place(11, dy, 18, Material.BEDROCK);
     }
 
     private void place(int x, int y, int z, Material material){
         new Location(this.world, this.x + x, this.y + y, this.z + z).getBlock().setType(material);
     }
 
-    private void placeLight(){
-        for(int dx = 1; dx < 12; dx++){
-            for(int dz = 1; dz < 7; dz++){
-                place(dx, 5, dz, Material.GLOWSTONE);
-            }
-        }
+    private void place(int x, int y, int z, Material material, BlockFace facing){
+        Location loc = new Location(this.world, this.x + x, this.y + y, this.z + z);
+        loc.getBlock().setType(material);
+        Directional blockFacing = (Directional) loc.getBlock().getBlockData();
+        blockFacing.setFacing(facing);
+        loc.getBlock().setBlockData(blockFacing);
 
-        for(int dx = 2; dx < 11; dx++){
-            for(int dz = 8; dz < 18; dz++){
-                place(dx, 5, dz, Material.GLOWSTONE);
+
+    }
+
+    private void placeDoubleChest(int x, int y, int z, BlockFace facing, boolean Xoriented){
+        Location firstChest = null;
+        Location secondChest = null;
+        if(Xoriented) {
+            firstChest = new Location(this.world, this.x + x, this.y + y, this.z + z);
+            secondChest = new Location(this.world, this.x + (x + 1), this.y + y, this.z + z);
+        }else {
+            firstChest = new Location(this.world, this.x + x, this.y + y, this.z + z);
+            secondChest = new Location(this.world, this.x + x, this.y + y, this.z + (z -1));
+        }
+        Block firstBlock = firstChest.getBlock();
+        Block secondBlock = secondChest.getBlock();
+
+        firstBlock.setType(Material.CHEST);
+        secondBlock.setType(Material.CHEST);
+
+        Directional firstChestDirectionnal = (Directional) firstBlock.getBlockData();
+        firstChestDirectionnal.setFacing(facing);
+        firstChest.getBlock().setBlockData(firstChestDirectionnal);
+
+        Directional secondChestDirectionnal = (Directional) secondBlock.getBlockData();
+        secondChestDirectionnal.setFacing(facing);
+        secondChest.getBlock().setBlockData(secondChestDirectionnal);
+
+
+        org.bukkit.block.data.type.Chest firstChestData = (org.bukkit.block.data.type.Chest) firstBlock.getBlockData();
+        firstChestData.setType(Chest.Type.RIGHT);
+        firstBlock.setBlockData(firstChestData);
+
+        org.bukkit.block.data.type.Chest secondChestData = (org.bukkit.block.data.type.Chest) secondBlock.getBlockData();
+        secondChestData.setType(Chest.Type.LEFT);
+        secondBlock.setBlockData(secondChestData);
+
+    }
+
+    private void placeLight(){
+        int dy = 5;
+        for(int dx = 1; dx < 12; dx++){
+            for(int dz = 1; dz < 8; dz++){
+                place(dx, dy, dz, Material.GLOWSTONE);
             }
         }
+        for(int dx = 2; dx < 11; dx++){
+            for(int dz = 9; dz < 18; dz++){
+                place(dx, dy, dz, Material.GLOWSTONE);
+            }
+        }
+        place(1, dy, 13, Material.GLOWSTONE);
+        place(11, 13, 13, Material.GLOWSTONE);
     }
 
     private void placeMainPiece(int dy){
-        /*   1  2  3  4  5  6  7  8  9  10  11
-           8 X  A  A  X  X  X  X  X  X   X   X
-           9 B  X  X  X  X  X  X  X  X   X   C
-          10 B  X  X  X  X  X  X  X  X   X   C
-          11 B  X  X  X  X  X  X  X  X   X   C
-          12 B  X  X  X  X  X  X  X  X   X   C
-          13 E  X  X  X  X  X  X  X  X   X   E
-          14 F  X  X  X  X  X  X  X  X   X   C
-          15 F  X  X  X  X  X  X  X  X   X   C
-          16 F  X  X  X  X  X  X  X  X   X   C
-          17 F  X  X  X  X  X  X  X  X   X   C
-          18 X  C  C  C  C  E  C  C  C   C   X
-         */
-        place(2, dy, 8, Material.BREWING_STAND);
-        place(3, dy, 8, Material.BREWING_STAND);
-        place(1, dy, 9, Material.BLAST_FURNACE);
-        place(1, dy, 10, Material.BLAST_FURNACE);
-        place(1, dy, 11, Material.BLAST_FURNACE);
-        place(1, dy, 12, Material.BLAST_FURNACE);
+        place(1, dy, 9, Material.BLAST_FURNACE,BlockFace.EAST);
+        place(1, dy, 10, Material.BLAST_FURNACE, BlockFace.EAST);
+        place(1, dy, 11, Material.BLAST_FURNACE, BlockFace.EAST);
+        place(1, dy, 12, Material.BLAST_FURNACE, BlockFace.EAST);
         place(1, dy, 13, Material.CRAFTING_TABLE);
-        place(1, dy, 14, Material.FURNACE);
-        place(1, dy, 15, Material.FURNACE);
-        place(1, dy, 16, Material.FURNACE);
-        place(1, dy, 17, Material.FURNACE);
-        place(2, dy, 18, Material.CHEST);
-        place(3, dy, 18, Material.CHEST);
-        place(4, dy, 18, Material.CHEST);
-        place(5, dy, 18, Material.CHEST);
-        place(6, dy, 18, Material.CHEST);
-        place(7, dy, 18, Material.CHEST);
-        place(8, dy, 18, Material.CHEST);
-        place(9, dy, 18, Material.CHEST);
-        place(10, dy, 18, Material.CHEST);
-        place(11, dy, 9, Material.CHEST);
-        place(11, dy, 10, Material.CHEST);
-        place(11, dy, 11, Material.CHEST);
-        place(11, dy, 12, Material.CHEST);
+        place(1, dy, 14, Material.FURNACE, BlockFace.EAST);
+        place(1, dy, 15, Material.FURNACE, BlockFace.EAST);
+        place(1, dy, 16, Material.FURNACE, BlockFace.EAST);
+        place(1, dy, 17, Material.FURNACE, BlockFace.EAST);
+        /* Coffres au mur perpendiculaire aux fours */
+        place(2, dy, 18, Material.CHEST, BlockFace.NORTH);
+        placeDoubleChest(3, dy, 18, BlockFace.NORTH, true);
+        placeDoubleChest(5, dy, 18, BlockFace.NORTH,  true);
+        placeDoubleChest(7, dy, 18, BlockFace.NORTH,  true);
+        placeDoubleChest(9, dy, 18, BlockFace.NORTH,  true);
+
+        /* Coffres en face du mur de fours */
+        place(11, dy, 17, Material.SMOKER, BlockFace.WEST);
+        placeDoubleChest(11, dy, 16, BlockFace.WEST, false);
+        place(11, dy, 14, Material.SMITHING_TABLE);
         place(11, dy, 13, Material.CRAFTING_TABLE);
-        place(11, dy, 14, Material.CHEST);
-        place(11, dy, 15, Material.CHEST);
-        place(11, dy, 16, Material.CHEST);
-        place(11, dy, 17, Material.CHEST);
+        place(11, dy, 12, Material.GRINDSTONE, BlockFace.WEST);
+        placeDoubleChest(11, dy, 11, BlockFace.WEST, false);
+        place(11, dy, 9, Material.STONECUTTER, BlockFace.WEST);
     }
 
     private void placeOtherThings(){
-        /*
-             1  2  3  4  5  6  7  8  9  10  11
-           1 X  X  X  X  X  X  B  B  B  B   B
-           2 P  O  X  X  X  X  B  X  X  X   B
-           3 X  P  X  X  X  X  B  X  E  X   B
-           4 P  O  X  X  X  X  B  X  X  X   B
-           5 X  P  X  X  X  X  X  X  X  X   X
-           6 P  O  X  X  X  X  X  X  X  X   X
-         */
+
+        place(11, 1, 7, Material.ANVIL);
+        place(11, 2, 7, Material.ANVIL);
+        place(11, 3, 7, Material.ANVIL);
+        place(11, 4, 7, Material.ANVIL);
+
         place(7, 1, 1, Material.BOOKSHELF);
         place(8, 1, 1, Material.BOOKSHELF);
         place(9, 1, 1, Material.BOOKSHELF);
@@ -179,14 +222,11 @@ public class Base extends Structure{
         place(7, 2, 2, Material.BOOKSHELF);
         place(11, 2, 2, Material.BOOKSHELF);
 
-        place(2,2, 3, Material.OAK_PLANKS);
         place(7, 2, 3, Material.BOOKSHELF);
         place(11, 2, 3, Material.BOOKSHELF);
 
         place(1, 2, 4, Material.OAK_PLANKS);
         place(2,2, 4, Material.OAK_PLANKS);
-
-        place(2,2, 5, Material.OAK_PLANKS);
 
         place(1, 2, 6, Material.OAK_PLANKS);
         place(2,2, 6, Material.OAK_PLANKS);
@@ -206,7 +246,7 @@ public class Base extends Structure{
     }
 
     private void spawnVillagers(){
-        Location villagerLoc1 = new Location(this.world, this.x + 1, this.y + 1, this.z + 3);
+        Location villagerLoc1 = new Location(this.world, this.x + 1.5, this.y + 1, this.z + 3.5, -90, 0);
         Villager villager1 = (Villager) this.world.spawnEntity(villagerLoc1, EntityType.VILLAGER);
         villager1.setCustomNameVisible(true);
         villager1.setAI(false);
@@ -214,19 +254,24 @@ public class Base extends Structure{
         villager1.setVillagerType(Villager.Type.PLAINS);
         villager1.setInvulnerable(true);
         villager1.customName(Component.text("Liste des items"));
-        this.villagersUUID.add(villager1.getUniqueId());
-        Location villagerLoc2 = new Location(this.world, this.x + 1, this.y + 1, this.z + 3);
-        Villager villager2 = (Villager) this.world.spawnEntity(villagerLoc1, EntityType.VILLAGER);
+        this.listVillagerID = villager1.getUniqueId();
+        Location villagerLoc2 = new Location(this.world, this.x + 1.5, this.y + 1, this.z + 5.5, -90, 0);
+        Villager villager2 = (Villager) this.world.spawnEntity(villagerLoc2, EntityType.VILLAGER);
         villager2.setCustomNameVisible(true);
         villager2.setAI(false);
         villager2.setAdult();
         villager2.setVillagerType(Villager.Type.PLAINS);
         villager2.setInvulnerable(true);
         villager2.customName(Component.text("Don des items"));
-        this.villagersUUID.add(villager2.getUniqueId());
+        this.givenVillagerID = villager2.getUniqueId();
     }
 
-    public List<UUID> getVillagersUUID() {
-        return villagersUUID;
+    public UUID getGivenVillagerID() {
+        return givenVillagerID;
     }
+
+    public UUID getListVillagerID() {
+        return listVillagerID;
+    }
+
 }

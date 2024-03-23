@@ -1,35 +1,39 @@
 package fr.mrtayai.blocks.classes;
 
-import fr.mrtayai.blocks.state.playing.ItemInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-
-import static org.bukkit.Color.*;
+import java.util.UUID;
 
 public class Team {
 
+
+    private final UUID teamID = UUID.randomUUID();
+
     private String name;
     private Color color;
+
+    private NamedTextColor textColor;
+
     private List<BlockPlayer> players;
 
     private List<ItemStack> itemsToCollect;
     private List<ItemStack> itemsCollected;
 
-    public Team(String name, Color color){
+    private String displayName;
+
+    public Team(String name, String displayName, Color color){
         this.name = name;
         this.color = color;
-        this.players = new LinkedList<>();
-
+        this.convertColor(this.color);
+        this.displayName = displayName;
+        this.players = new ArrayList<>();
+        this.itemsCollected = new ArrayList<>();
     }
 
     public String getName() {
@@ -58,31 +62,23 @@ public class Team {
         return this.players;
     }
 
-    public Color getColor(){
-        return this.color;
-    }
-
     public void sendTeamMessage(Component message){
-        Component teamMessage = Component.text("[BlocksTeam] ", getTextColor()).append(message);
+        Component teamMessage = Component.text("[BlocksTeam] ", this.textColor).append(message);
         for(BlockPlayer player : this.players){
             player.getPlayer().sendMessage(teamMessage);
         }
-    }
-
-    private TextColor getTextColor(){
-        return TextColor.color(this.color.asRGB());
     }
 
     public void setItemsToCollect(List<ItemStack> items){
         this.itemsToCollect = items;
     }
 
-    public boolean setItemCollected(ItemStack item){
+    public void setItemCollected(ItemStack item){
         if(itemsCollected.contains(item)){
-            return false;
+            return;
         }
+        Bukkit.getLogger().info("Team " + item.toString());
         itemsCollected.add(item);
-        return true;
     }
 
     public double getPercent(){
@@ -97,12 +93,50 @@ public class Team {
         return itemsToCollect;
     }
 
-    private void createTeamInventories(){
-
+    public UUID getTeamID() {
+        return teamID;
     }
 
-    private void changeItemInventory(){
+    public String getDisplayName() {
+        return displayName;
+    }
 
+    public Color getColor() {
+        return this.color;
+    }
+
+    public NamedTextColor getTextColor() {
+        return this.textColor;
+    }
+
+    private void convertColor(Color color){
+        if (color.equals(Color.RED)) {
+            this.textColor = NamedTextColor.RED;
+        } else if (color.equals(Color.BLUE)) {
+            this.textColor = NamedTextColor.BLUE;
+        } else if (color.equals(Color.GREEN)) {
+            this.textColor = NamedTextColor.DARK_GREEN;
+        } else if (color.equals(Color.YELLOW)) {
+            this.textColor = NamedTextColor.YELLOW;
+        } else if (color.equals(Color.AQUA)) {
+            this.textColor = NamedTextColor.AQUA;
+        } else if (color.equals(Color.BLACK)) {
+            this.textColor = NamedTextColor.BLACK;
+        } else if (color.equals(Color.FUCHSIA)) {
+            this.textColor = NamedTextColor.LIGHT_PURPLE;
+        } else if (color.equals(Color.GRAY)) {
+            this.textColor = NamedTextColor.GRAY;
+        } else if (color.equals(Color.LIME)) {
+            this.textColor = NamedTextColor.GREEN;
+        } else if (color.equals(Color.MAROON)) {
+            this.textColor = NamedTextColor.DARK_RED;
+        } else if (color.equals(Color.NAVY)) {
+            this.textColor = NamedTextColor.DARK_BLUE;
+        } else if (color.equals(Color.OLIVE)) {
+            this.textColor = NamedTextColor.DARK_GREEN;
+        } else {
+            this.textColor = NamedTextColor.WHITE;
+        }
     }
 
 }

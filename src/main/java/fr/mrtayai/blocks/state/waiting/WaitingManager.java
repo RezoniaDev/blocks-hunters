@@ -1,21 +1,23 @@
 package fr.mrtayai.blocks.state.waiting;
 
-import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.classes.Team;
+import fr.mrtayai.blocks.gui.TeamInventory;
 import fr.mrtayai.blocks.manager.Game;
 import fr.mrtayai.blocks.state.playing.GameManager;
 import fr.mrtayai.blocks.utils.TeamAreaUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.*;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.io.File;
+import java.util.*;
 
 public class WaitingManager {
 
@@ -24,51 +26,68 @@ public class WaitingManager {
     private WaitingListener listener;
     private int waitingRunnable;
 
-    private TeamSelectionGUI gui;
+    private ItemStack teamChooser;
+
+    private Inventory chooseInventory;
 
     public WaitingManager(Game game){
         this.game = game;
+
+        this.prepareWorlds();
         this.game.setWaitingManager(this);
         this.scheduler = Bukkit.getScheduler();
         this.registerListeners();
         this.launchWaitingRunnable();
-        this.gui = new TeamSelectionGUI(this.game);
-        Team redTeam = new Team("red", Color.RED);
+        /* Création de l'équipe rouge */
+        Team redTeam = new Team("red", "Rouge",Color.RED);
         redTeam.setItemsToCollect(this.game.getMain().getItems());
+        this.game.getTeamManager().addTeamInventory(redTeam, new TeamInventory(redTeam.getTeamID(), redTeam.getItemsToCollect()));
         try {
             this.game.getTeamManager().addTeam(redTeam);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        TeamAreaUtils redTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 1000000, 20000, redTeam);
-        this.game.getTeamsBases().add(redTeamUtils);
-        Team greenTeam = new Team("green", Color.GREEN);
+        TeamAreaUtils redTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 300, 20000, redTeam.getTeamID());
+        this.game.addTeamBase(redTeamUtils);
+
+        /* Création de l'équipe verte */
+        Team greenTeam = new Team("green", "Vert", Color.GREEN);
         greenTeam.setItemsToCollect(this.game.getMain().getItems());
+        this.game.getTeamManager().addTeamInventory(greenTeam, new TeamInventory(greenTeam.getTeamID(), greenTeam.getItemsToCollect()));
         try {
             this.game.getTeamManager().addTeam(greenTeam);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        TeamAreaUtils greenTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), -20000, 1000000, 20000, greenTeam);
-        this.game.getTeamsBases().add(greenTeamUtils);
-        Team blueTeam = new Team("blue", Color.BLUE);
+        TeamAreaUtils greenTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), -20000, 300, 20000, greenTeam.getTeamID());
+        this.game.addTeamBase(greenTeamUtils);
+
+        /* Création de l'équipe bleue */
+        Team blueTeam = new Team("blue", "Bleu", Color.BLUE);
         blueTeam.setItemsToCollect(this.game.getMain().getItems());
+        this.game.getTeamManager().addTeamInventory(blueTeam, new TeamInventory(blueTeam.getTeamID(), blueTeam.getItemsToCollect()));
         try {
             this.game.getTeamManager().addTeam(blueTeam);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        TeamAreaUtils blueTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 1000000, -20000, blueTeam);
-        this.game.getTeamsBases().add(blueTeamUtils);
-        Team yellowTeam = new Team("yellow", Color.YELLOW);
+        TeamAreaUtils blueTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 300, -20000, blueTeam.getTeamID());
+        this.game.addTeamBase(blueTeamUtils);
+
+        /* Création de l'équipe jaune */
+        Team yellowTeam = new Team("yellow", "Jaune", Color.YELLOW);
         yellowTeam.setItemsToCollect(this.game.getMain().getItems());
+        this.game.getTeamManager().addTeamInventory(yellowTeam, new TeamInventory(yellowTeam.getTeamID(), yellowTeam.getItemsToCollect()));
         try {
             this.game.getTeamManager().addTeam(yellowTeam);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        TeamAreaUtils yellowTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), -20000, 1000000, -20000, yellowTeam);
-        this.game.getTeamsBases().add(yellowTeamUtils);
+        TeamAreaUtils yellowTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), -20000, 300, -20000, yellowTeam.getTeamID());
+        this.game.addTeamBase(yellowTeamUtils);
+        this.teamChooser = this.createTeamChooser();
+        this.chooseInventory = this.createChooseInventory();
+
     }
 
     public void launchWaitingRunnable(){
@@ -88,38 +107,79 @@ public class WaitingManager {
     public void stopWaitingState(){
         unregisterListeners();
         stopWaitingRunnable();
-        for(Team team : this.game.getTeamManager().getTeams()){
-            if(team.getPlayers().isEmpty()){
-                try {
-                    this.game.getTeamManager().removeTeam(team.getName());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        for(TeamAreaUtils utils : this.game.getTeamsBases()){
-            if(this.game.getTeamManager().getTeams().contains(utils.getTeam())){
-                utils.build();
-            }else{
-                this.game.getTeamsBases().remove(utils);
-            }
-        }
+        this.game.getTeamManager().removeEmptyTeams();
+        this.game.prepareTeamBases();
         new GameManager(this.game).start();
         this.game.setPhase(GamePhase.GAME);
+
     }
 
-    private void registerVillagers(){
-        Map<UUID, Team> villagers = new HashMap<>();
-        for(TeamAreaUtils base : this.game.getTeamsBases()){
-            for(UUID villager : base.getBase().getVillagersUUID()){
-                villagers.put(villager, base.getTeam());
-            }
+    private void prepareWorlds(){
+        for(World world : Bukkit.getWorlds()){
+            Bukkit.getServer().unloadWorld(world, false);
         }
-        this.game.setVillagers(villagers);
+
+        File worldContainer = Bukkit.getWorldContainer();
+        new File(worldContainer, "world").delete();
+        new File(worldContainer, "world_nether").delete();
+        new File(worldContainer, "world_the_end").delete();
+
+        WorldCreator.name("world").createWorld();
+        WorldCreator.name("world_nether").environment(World.Environment.NETHER).createWorld();
+        WorldCreator.name("world_the_end").environment(World.Environment.THE_END).createWorld();
+
     }
 
     private void unregisterListeners(){
         HandlerList.unregisterAll(this.listener);
+    }
+
+    private ItemStack createTeamChooser(){
+        ItemStack item = new ItemStack(Material.COMPASS);
+        ItemMeta meta = item.getItemMeta();
+        if(meta != null){
+            meta.displayName(Component.text("Sélection des équipes"));
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    public ItemStack getTeamChooser() {
+        return teamChooser;
+    }
+
+    public Inventory getChooseInventory() {
+        return chooseInventory;
+    }
+
+    private Inventory createChooseInventory(){
+        Inventory inv = Bukkit.createInventory(null, 9, "Sélection des équipes");
+        inv.setItem(2, this.getTeamWool("yellow"));
+        inv.setItem(3, this.getTeamWool("green"));
+        inv.setItem(4, this.getTeamWool("red"));
+        inv.setItem(5, this.getTeamWool("blue"));
+        return inv;
+    }
+
+    private ItemStack getTeamWool(String teamName){
+        ItemStack item = null;
+        switch(teamName){
+            case "yellow":
+                item = new ItemStack(Material.YELLOW_WOOL);
+                break;
+            case "green":
+                item = new ItemStack(Material.GREEN_WOOL);
+                break;
+            case "red":
+                item = new ItemStack(Material.RED_WOOL);
+                break;
+            case "blue":
+                item = new ItemStack(Material.BLUE_WOOL);
+                break;
+        }
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(Component.text("Rejoindre l'équipe " + teamName));
+        return item;
     }
 
 }

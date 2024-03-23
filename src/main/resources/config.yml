@@ -1,0 +1,9 @@
+potions:
+  normal: true
+  extended: true
+  upgraded: true
+  splash: true
+  lingening: true
+  tipped_arrow: true
+goat_horn:
+  specific: true

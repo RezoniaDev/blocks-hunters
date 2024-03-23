@@ -1,10 +1,13 @@
 package fr.mrtayai.blocks.manager;
 
-import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.BlockPlayer;
 import fr.mrtayai.blocks.classes.Team;
+import fr.mrtayai.blocks.gui.TeamInventory;
 import fr.mrtayai.blocks.state.playing.ItemInventory;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,11 +17,13 @@ public class TeamManager {
     private List<Team> teams;
     private final Game game;
 
-    private Map<Team, ItemInventory> teamInventories;
+    private Map<Team, TeamInventory> teamInventories;
+
+    private Map<Double, UUID> scorePerTeam = new HashMap<Double, UUID>();
 
     public TeamManager(Game game){
         this.game = game;
-        this.teams = new LinkedList<>();
+        this.teams = new ArrayList<>();
         this.teamInventories = new HashMap<>();
     }
 
@@ -54,6 +59,7 @@ public class TeamManager {
                 for (Team team1 : this.teams) {
                     if (team1.getName().equals(team.getName())){
                         team1.addPlayer(player);
+                        changeColorInTab(team1, player.getPlayer());
                     }
                 }
             }else{
@@ -69,6 +75,7 @@ public class TeamManager {
             for(Team team : teams){
                 if(team.isInTheTeam(player)){
                     team.removePlayer(player);
+                    changeColorInTab(null, player.getPlayer());
                 }
             }
         }
@@ -80,11 +87,17 @@ public class TeamManager {
                 return;
             }else{
                 for(Team team : teams){
-                    if(team.getName().equals(getTeamPlayer(player).getName())){
-                        team.removePlayer(player);
-                    }
-                    if(team.getName().equals(teamName)){
-                        team.addPlayer(player);
+                    Team teamPlayer = getTeamPlayer(player);
+                    if(teamPlayer != null) {
+                        if (team.getName().equals(teamPlayer.getName())) {
+                            team.removePlayer(player);
+                            changeColorInTab(null, player.getPlayer());
+                        }
+                    }else{
+                        if(team.getName().equals(teamName)) {
+                            team.addPlayer(player);
+                            changeColorInTab(team, player.getPlayer());
+                        }
                     }
                 }
             }
@@ -92,6 +105,7 @@ public class TeamManager {
             for(Team team : this.teams){
                 if(Objects.equals(team.getName(), teamName)){
                     team.addPlayer(player);
+                    changeColorInTab(team, player.getPlayer());
                     return;
                 }
             }
@@ -102,6 +116,10 @@ public class TeamManager {
 
     public List<Team> getTeams() {
         return teams;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
     }
 
 
@@ -118,7 +136,6 @@ public class TeamManager {
         for(Team team : teams){
             if(Objects.equals(team.getName(), teamName)){
                 this.teams.remove(team);
-                HandlerList.unregisterAll(this.teamInventories.get(team));
                 this.teamInventories.remove(team);
             }
         }
@@ -132,14 +149,17 @@ public class TeamManager {
            }
         }
         this.teams.add(team);
-        ItemInventory inventory = new ItemInventory(this.game, team);
-        Bukkit.getPluginManager().registerEvents(inventory, this.game.getMain());
-        this.teamInventories.put(team, new ItemInventory(this.game, team));
+    }
+
+    public void addTeamInventory(Team team, TeamInventory inventory){
+        this.teamInventories.put(team, inventory);
     }
 
     public boolean isCollected(ItemStack item, Team teamSearch){
         for(Team team : this.teams){
             if(team.getName().equals(teamSearch.getName())){
+                Bukkit.getLogger().info("Team " + teamSearch.getName());
+                Bukkit.getLogger().info("Item " + item.toString());
                 return team.getItemsCollected().contains(item);
             }
         }
@@ -150,11 +170,67 @@ public class TeamManager {
         for(Team team : this.teams){
             if(team.getName().equals(teamSearch.getName())){
                 team.setItemCollected(item);
+                this.teamInventories.get(team).setItemCollected(item);
             }
         }
     }
-    public void openTeamInventory(BlockPlayer player){
-        this.teamInventories.get(this.getTeamPlayer(player)).openInventory(player);
+    public TeamInventory getTeamInventory(Team team){
+        return this.teamInventories.get(team);
     }
+
+    public void removeEmptyTeams(){
+        this.teams.removeIf(team -> team.getPlayers().isEmpty());
+    }
+
+    public boolean hasTeam(Team team){
+        return this.teams.contains(team);
+    }
+
+    public boolean hasTeam(UUID uuid){
+        for(Team team : this.teams){
+            for(BlockPlayer player : team.getPlayers()){
+                if(player.getPlayer().getUniqueId().equals(uuid)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Team getTeam(UUID uuid){
+        for(Team team : this.teams){
+            if(team.getTeamID().equals(uuid)){
+                return team;
+            }
+        }
+        return null;
+    }
+
+    private void changeColorInTab(Team team, Player player){
+        if(team == null){
+            player.playerListName(Component.text(player.getName()).color(NamedTextColor.WHITE));
+        }else {
+            player.playerListName(Component.text(player.getName()).color(team.getTextColor()));
+        }
+    }
+
+    public void registerTeamScore(){
+        for(Team team : this.teams){
+            this.scorePerTeam.put(team.getPercent(), team.getTeamID());
+        }
+        List<Double> employeeByKey = new ArrayList<>(this.scorePerTeam.keySet());
+        Collections.sort(employeeByKey, Collections.reverseOrder());
+        Map<Double, UUID> sortedScore = new HashMap<>();
+        for(Double score : employeeByKey){
+            sortedScore.put(score, this.scorePerTeam.get(score));
+        }
+        this.scorePerTeam = sortedScore;
+    }
+
+    public Map<Double, UUID> getScorePerTeam(){
+        return this.scorePerTeam;
+    }
+
+
 
 }

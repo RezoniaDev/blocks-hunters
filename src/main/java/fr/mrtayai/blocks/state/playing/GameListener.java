@@ -8,7 +8,6 @@ import fr.mrtayai.blocks.manager.Game;
 import fr.mrtayai.blocks.structures.Base;
 import fr.mrtayai.blocks.utils.TeamAreaUtils;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,17 +17,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityPlaceEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Objects;
 
 public class GameListener implements Listener {
 
@@ -39,12 +35,30 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
+    public void onItemPickUp(EntityPickupItemEvent event){
+        if(event.getItem().getItemStack().getType() == Material.AIR){
+            return;
+        }
+        if(event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            BlockPlayer blockPlayer = this.game.getPlayerManager().getBlockPlayer(player);
+            this.game.getStatsManager().getStatsPlayer(blockPlayer).addElementPickup(event.getItem().getItemStack());
+        }
+    }
+
+    @EventHandler
     public void onBlockBreak(org.bukkit.event.block.BlockBreakEvent event) {
         Player player = event.getPlayer();
         BlockPlayer blockPlayer = this.game.getPlayerManager().getBlockPlayer(player);
         if (this.game.getPhase().equals(GamePhase.GAME)) {
+            if(event.getBlock().getType() == Material.AIR){
+                return;
+            }
             if (this.game.getTeamBase(blockPlayer).getArea().isInArea(player.getLocation())) {
                 event.setCancelled(true);
+            }else{
+                ItemStack item = new ItemStack(event.getBlock().getType());
+                this.game.getStatsManager().getStatsPlayer(blockPlayer).addElementBreaked(item);
             }
         }
     }
@@ -56,6 +70,7 @@ public class GameListener implements Listener {
                 Player player = (Player) e.getWhoClicked();
                 Team team = this.game.getTeamManager().getTeamPlayer(this.game.getPlayerManager().getBlockPlayer(player));
                 TeamInventory teamInventory = this.game.getTeamManager().getTeamInventory(team);
+                if(e.getClickedInventory() == null) return;
                 if(teamInventory.containsInventory(e.getClickedInventory())){
                     e.setCancelled(true);
                     if(e.getCurrentItem() == null || e.getCurrentItem().getType().isAir()){
@@ -122,10 +137,24 @@ public class GameListener implements Listener {
         }
     }
 
+
+    @EventHandler
+    public void onItemCraft(CraftItemEvent event){
+        if(event.getCurrentItem().getType() == Material.AIR){
+            return;
+        }
+        Player player = (Player) event.getWhoClicked();
+        BlockPlayer blockPlayer = this.game.getPlayerManager().getBlockPlayer(player);
+        this.game.getStatsManager().getStatsPlayer(blockPlayer).addElementCrafted(event.getCurrentItem());
+    }
+
     @EventHandler
     public void onPlayerPlaceBlock(BlockPlaceEvent event){
         if(this.game.getPhase().equals(GamePhase.GAME)){
             Player player = event.getPlayer();
+            BlockPlayer blockPlayer = this.game.getPlayerManager().getBlockPlayer(player);
+            ItemStack itemStack = new ItemStack(event.getBlockPlaced().getType());
+            this.game.getStatsManager().getStatsPlayer(blockPlayer).addElementPlaced(itemStack);
             TeamAreaUtils utils = this.game.getTeamBase(this.game.getPlayerManager().getBlockPlayer(player));
             if(utils.getArea().isInArea(player.getLocation())){
                 event.setCancelled(true);
@@ -155,31 +184,21 @@ public class GameListener implements Listener {
                 Player player = event.getPlayer();
                 ItemStack itemMainHand = player.getInventory().getItemInMainHand();
                 ItemStack itemPlugin = new ItemStack(itemMainHand);
-                Bukkit.getLogger().info(itemMainHand.toString());
                 itemPlugin.setAmount(1);
-                Bukkit.getLogger().info(itemPlugin.toString());
                 if (itemMainHand.getType().isAir()) {
                     return;
                 }
-                Bukkit.getLogger().info("i");
                 if (this.game.getTeamManager().isCollected(itemPlugin, team)) {
-                    Bukkit.getLogger().info("a");
                     player.sendMessage(Component.text("[Blocks] Cet item a déjà été ajouté !"));
                 } else if (!this.game.getTeamManager().getTeam(team.getTeamID()).getItemsToCollect().contains(itemPlugin)) {
                     return;
                 }else {
-                    Bukkit.getLogger().info("b");
                     this.game.getTeamManager().setCollected(itemPlugin, team);
-                    Bukkit.getLogger().info("c");
-                    this.game.getPlayerManager().incrementBlock(player.getUniqueId());
-                    Bukkit.getLogger().info("z " + player.getInventory().getItemInMainHand());
-                    Bukkit.getLogger().info("y" + itemMainHand.toString());
+                    this.game.getPlayerManager().addItemCollected(player.getUniqueId(), itemPlugin);
                     if(itemMainHand.getAmount() > 1){
                         int amount = itemMainHand.getAmount();
-                        Bukkit.getLogger().info("e " + amount);
                         player.getInventory().getItemInMainHand().setAmount(amount-1);
                     }else {
-                        Bukkit.getLogger().info("f");
                         player.getInventory().getItemInMainHand().setAmount(0);
                     }
                     player.sendMessage(Component.text("[Blocks] Cet item a bien été ajouté !"));

@@ -2,7 +2,10 @@ package fr.mrtayai.blocks.classes;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class BlockPlayer {
@@ -11,11 +14,11 @@ public class BlockPlayer {
 
     private Location previousLocation;
 
-    private int blocksGiven;
+    private List<ItemStack> itemsCollected;
 
     public BlockPlayer(Player player){
         this.player = player;
-        this.blocksGiven = 0;
+        this.itemsCollected = new ArrayList<>();
         this.previousLocation = null;
     }
 
@@ -32,12 +35,12 @@ public class BlockPlayer {
     }
 
 
-    public int getBlocksGiven() {
-        return this.blocksGiven;
+    public List<ItemStack> getItemsCollected() {
+        return this.itemsCollected;
     }
 
-    public void incrementBlocksGiven(){
-        this.blocksGiven++;
+    public void addItemCollected(ItemStack item){
+        this.itemsCollected.add(item);
     }
 
     public Location getPreviousLocation(){

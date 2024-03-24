@@ -48,7 +48,7 @@ public class WaitingManager {
         this.launchWaitingRunnable();
         /* Création de l'équipe rouge */
         Team redTeam = new Team("red", "Rouge",Color.RED);
-        redTeam.setItemsToCollect(this.game.getMain().getItems());
+        redTeam.setItemsToCollect(new ArrayList<>(this.game.getMain().getItems()));
         this.game.getTeamManager().addTeamInventory(redTeam, new TeamInventory(redTeam.getTeamID(), redTeam.getItemsToCollect()));
         try {
             this.game.getTeamManager().addTeam(redTeam);
@@ -60,7 +60,7 @@ public class WaitingManager {
 
         /* Création de l'équipe verte */
         Team greenTeam = new Team("green", "Vert", Color.GREEN);
-        greenTeam.setItemsToCollect(this.game.getMain().getItems());
+        greenTeam.setItemsToCollect(new ArrayList<>(this.game.getMain().getItems()));
         this.game.getTeamManager().addTeamInventory(greenTeam, new TeamInventory(greenTeam.getTeamID(), greenTeam.getItemsToCollect()));
         try {
             this.game.getTeamManager().addTeam(greenTeam);
@@ -72,7 +72,7 @@ public class WaitingManager {
 
         /* Création de l'équipe bleue */
         Team blueTeam = new Team("blue", "Bleu", Color.BLUE);
-        blueTeam.setItemsToCollect(this.game.getMain().getItems());
+        blueTeam.setItemsToCollect(new ArrayList<>(this.game.getMain().getItems()));
         this.game.getTeamManager().addTeamInventory(blueTeam, new TeamInventory(blueTeam.getTeamID(), blueTeam.getItemsToCollect()));
         try {
             this.game.getTeamManager().addTeam(blueTeam);
@@ -84,7 +84,7 @@ public class WaitingManager {
 
         /* Création de l'équipe jaune */
         Team yellowTeam = new Team("yellow", "Jaune", Color.YELLOW);
-        yellowTeam.setItemsToCollect(this.game.getMain().getItems());
+        yellowTeam.setItemsToCollect(new ArrayList<>(this.game.getMain().getItems()));
         this.game.getTeamManager().addTeamInventory(yellowTeam, new TeamInventory(yellowTeam.getTeamID(), yellowTeam.getItemsToCollect()));
         try {
             this.game.getTeamManager().addTeam(yellowTeam);

@@ -2,7 +2,6 @@ package fr.mrtayai.blocks.classes;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 
@@ -74,11 +73,10 @@ public class Team {
     }
 
     public void setItemCollected(ItemStack item){
-        if(itemsCollected.contains(item)){
+        if(this.itemsCollected.contains(item)){
             return;
         }
-        Bukkit.getLogger().info("Team " + item.toString());
-        itemsCollected.add(item);
+        this.itemsCollected.add(item);
     }
 
     public double getPercent(){
@@ -86,19 +84,19 @@ public class Team {
     }
 
     public List<ItemStack> getItemsCollected() {
-        return itemsCollected;
+        return this.itemsCollected;
     }
 
     public List<ItemStack> getItemsToCollect() {
-        return itemsToCollect;
+        return this.itemsToCollect;
     }
 
     public UUID getTeamID() {
-        return teamID;
+        return this.teamID;
     }
 
     public String getDisplayName() {
-        return displayName;
+        return this.displayName;
     }
 
     public Color getColor() {

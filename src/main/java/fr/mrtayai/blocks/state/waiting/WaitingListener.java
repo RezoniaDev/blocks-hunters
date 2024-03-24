@@ -2,6 +2,7 @@ package fr.mrtayai.blocks.state.waiting;
 
 import fr.mrtayai.blocks.classes.BlockPlayer;
 import fr.mrtayai.blocks.classes.GamePhase;
+import fr.mrtayai.blocks.classes.StatsPlayer;
 import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.manager.Game;
 import io.papermc.paper.event.block.BlockBreakBlockEvent;
@@ -34,6 +35,8 @@ public class WaitingListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event){
         if(this.game.getPhase().equals(GamePhase.WAITING)) {
             this.game.getPlayerManager().addPlayer(event.getPlayer());
+            StatsPlayer statsPlayer = new StatsPlayer(this.game.getPlayerManager().getBlockPlayer(event.getPlayer()));
+            this.game.getStatsManager().addStatsPlayer(statsPlayer);
             event.getPlayer().teleport(this.game.getLobby().getLobbySpawnLoc());
             event.getPlayer().setGameMode(GameMode.SURVIVAL);
             this.game.getScoreboardManager().addBoard(event.getPlayer());
@@ -46,6 +49,7 @@ public class WaitingListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         if(this.game.getPhase().equals(GamePhase.WAITING)){
+            this.game.getStatsManager().removeStatsPlayer(this.game.getPlayerManager().getBlockPlayer(event.getPlayer()));
             this.game.getPlayerManager().removePlayer(event.getPlayer());
             event.getPlayer().getInventory().clear();
             event.getPlayer().clearActivePotionEffects();

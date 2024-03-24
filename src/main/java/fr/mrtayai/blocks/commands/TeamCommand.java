@@ -1,14 +1,10 @@
 package fr.mrtayai.blocks.commands;
 
-import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.BlockPlayer;
 import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.manager.Game;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-
-import java.util.UUID;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.command.Command;
@@ -19,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public class TeamCommand implements CommandExecutor {
 
@@ -51,12 +48,10 @@ public class TeamCommand implements CommandExecutor {
             for(String s : args){
                 arg.append(s+"@");
             }
-            log(String.format("Args : %s | Args length %d", arg, args.length));
             if(args.length == 0){
                 sender.sendMessage(getHelpMessage(blockPlayer, false));
                 return true;
             }
-            log(args[0]);
             if (Objects.equals(args[0], "list")) {
                 if( (!player.hasPermission("blocks.team.list")) || (!player.hasPermission("blocks.team.*"))) {
                     player.sendMessage(Component.text("[Blocks] Vous n'avez pas la permission pour cette commande !", NamedTextColor.RED));
@@ -397,10 +392,6 @@ public class TeamCommand implements CommandExecutor {
             default:
                 return Color.WHITE;
         }
-    }
-
-    private void log(String message){
-        this.game.getMain().getLogger().info(message);
     }
 
 }

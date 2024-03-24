@@ -149,7 +149,6 @@ public class TeamInventory {
     public void setItemCollected(ItemStack itemCollected){
         for(Inventory inv : this.inventories){
             for(int i = 0; i < inv.getSize(); i++){
-                Bukkit.getLogger().info("Item n°"+i + " => " + inv.getItem(i));
                 if(inv.getItem(i) != null) {
                     if (inv.getItem(i).equals(itemCollected)) {
                         itemCollected.addUnsafeEnchantment(Enchantment.LUCK, 1);

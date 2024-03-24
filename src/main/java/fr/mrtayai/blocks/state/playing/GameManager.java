@@ -5,13 +5,9 @@ import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.manager.Game;
 import fr.mrtayai.blocks.state.end.EndManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.util.Random;
 
 public class GameManager {
 
@@ -37,6 +33,7 @@ public class GameManager {
             this.game.randomTeleport(player.getPlayer());
             player.getPlayer().getInventory().clear();
             player.getPlayer().clearActivePotionEffects();
+            player.getPlayer().setSaturation(5);
             player.setPreviousLocation(player.getPlayer().getLocation());
         }
     }
@@ -45,6 +42,7 @@ public class GameManager {
         this.scheduler.cancelTask(this.gameRunnableID);
         this.game.setPhase(GamePhase.END);
         HandlerList.unregisterAll(this.listener);
+        this.game.getTeamManager().registerTeamScore();
         EndManager manager = new EndManager(this.game);
     }
 

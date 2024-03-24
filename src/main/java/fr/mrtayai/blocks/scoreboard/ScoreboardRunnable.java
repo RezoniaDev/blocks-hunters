@@ -5,12 +5,9 @@ import fr.mrtayai.blocks.classes.BlockPlayer;
 import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.manager.Game;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 
-import java.awt.*;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +36,8 @@ public class ScoreboardRunnable implements Runnable {
                 timer=0;
             } else if (this.game.getPhase().equals(GamePhase.GAME)) {
                 changeGameBoard(board, timer);
+            } else if (this.game.getPhase().equals(GamePhase.END)){
+                changeEndBoard(board);
             }
         }
         timer++;
@@ -107,16 +106,16 @@ public class ScoreboardRunnable implements Runnable {
             Team team = teams.get(i);
             if(i == 0){
                 Component text = Component.text("1er : ");
-                text.append(getTeamComponent(team));
+                text = text.append(getTeamComponent(team));
                 lines.add(text);
             }else if(i == 1){
                 Component text = Component.text("2nde : ");
-                text.append(getTeamComponent(team));
+                text = text.append(getTeamComponent(team));
                 lines.add(text);
             } else {
                 Component text = Component.text(i+1);
-                text.append(Component.text("eme : "));
-                text.append(getTeamComponent(team));
+                text = text.append(Component.text("eme : "));
+                text = text.append(getTeamComponent(team));
                 lines.add(text);
             }
             lines.add(Component.text(""));
@@ -126,13 +125,12 @@ public class ScoreboardRunnable implements Runnable {
     }
 
     private Component getTeamComponent(Team team){
-        return Component.text("Equipe ")
+        Component teamComponent = Component.text("Equipe ")
                 .append(Component.text(team.getDisplayName()).color(team.getTextColor()))
                 .append(Component.text(" | Pourcentage : "))
                 .append(Component.text(team.getPercent()))
                 .append(Component.text(" %"));
+        return teamComponent;
     }
-
-
 
 }

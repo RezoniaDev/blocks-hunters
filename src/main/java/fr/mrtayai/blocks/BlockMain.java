@@ -4,8 +4,6 @@ import fr.mrtayai.blocks.commands.*;
 import fr.mrtayai.blocks.listeners.ItemProvider;
 import fr.mrtayai.blocks.manager.Game;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -69,13 +67,17 @@ public final class BlockMain extends JavaPlugin {
     public void onLoad() {
         Bukkit.unloadWorld("world", false);
         File worldDirectory = Bukkit.getWorldContainer();
-        new File(worldDirectory, "world").delete();
-        new File(worldDirectory, "world_nether").delete();
-        new File(worldDirectory, "world_the_end").delete();
+        this.deleteDirectory(new File(worldDirectory, "world"));
+        Bukkit.getLogger().info("Monde supprimé");
+        this.deleteDirectory(new File(worldDirectory, "world_nether"));
+        Bukkit.getLogger().info("Nether supprimé");
+        this.deleteDirectory(new File(worldDirectory, "world_the_end"));
+        Bukkit.getLogger().info("L'end supprimé");
     }
 
     @Override
     public void onDisable() {
+
         Bukkit.getLogger().info("Au revoir les bitches");
     }
 
@@ -87,6 +89,15 @@ public final class BlockMain extends JavaPlugin {
         return this.items;
     }
 
+    public boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
+    }
 
 
 

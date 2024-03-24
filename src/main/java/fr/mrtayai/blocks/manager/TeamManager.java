@@ -3,15 +3,11 @@ package fr.mrtayai.blocks.manager;
 import fr.mrtayai.blocks.classes.BlockPlayer;
 import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.gui.TeamInventory;
-import fr.mrtayai.blocks.state.playing.ItemInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
-import javax.naming.Name;
 import java.util.*;
 
 public class TeamManager {
@@ -162,8 +158,6 @@ public class TeamManager {
     public boolean isCollected(ItemStack item, Team teamSearch){
         for(Team team : this.teams){
             if(team.getName().equals(teamSearch.getName())){
-                Bukkit.getLogger().info("Team " + teamSearch.getName());
-                Bukkit.getLogger().info("Item " + item.toString());
                 return team.getItemsCollected().contains(item);
             }
         }
@@ -174,7 +168,7 @@ public class TeamManager {
         for(Team team : this.teams){
             if(team.getName().equals(teamSearch.getName())){
                 team.setItemCollected(item);
-                this.teamInventories.get(team).setItemCollected(item);
+                this.teamInventories.get(team).setItemCollected(new ItemStack(item));
             }
         }
     }

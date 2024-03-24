@@ -25,6 +25,9 @@ public class Game {
 
     private int finalTime = -1;
     private TeamManager teamManager;
+
+    private StatsManager statsManager;
+
     private PlayerManager playerManager;
 
     private Map<UUID, Team> teamsVillagers;
@@ -51,6 +54,7 @@ public class Game {
         this.teamManager = new TeamManager(this);
         this.scoreboardManager = new ScoreboardManager(this);
         this.saturation = new PotionEffect(PotionEffectType.SATURATION, 99999999, 99, false, false, false);
+        this.statsManager = new StatsManager(this);
     }
 
     public void start(){
@@ -183,5 +187,9 @@ public class Game {
 
     public GenerateMain getGenerationManager() {
         return generationManager;
+    }
+
+    public StatsManager getStatsManager() {
+        return statsManager;
     }
 }

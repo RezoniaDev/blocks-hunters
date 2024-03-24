@@ -1,11 +1,14 @@
 package fr.mrtayai.blocks.manager;
 
-import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.BlockPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class PlayerManager {
 
@@ -51,12 +54,8 @@ public class PlayerManager {
     }
 
 
-    public void incrementBlock(BlockPlayer player){
-        this.players.get(player).incrementBlocksGiven();
-    }
-
-    public void incrementBlock(UUID uuid){
-        this.getBlockPlayer(uuid).incrementBlocksGiven();
+    public void addItemCollected(UUID uuid, ItemStack item){
+        this.getBlockPlayer(uuid).addItemCollected(item);
     }
 
     public void changeLastLocation(BlockPlayer player, Location previousLocation){

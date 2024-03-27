@@ -19,22 +19,21 @@ public final class BlockMain extends JavaPlugin {
     private List<ItemStack> items;
 
     @Override
-    public void onEnable(){
+    public void onEnable() {
         Bukkit.getLogger().info("Bonjour les bitches");
-
         File dataFolder = getDataFolder();
-        if(!dataFolder.exists()) dataFolder.mkdir();
+        if (!dataFolder.exists()) dataFolder.mkdir();
 
         saveDefaultConfig();
 
         File itemFile = new File(dataFolder, "items.txt");
-        if(!itemFile.exists()){
-            try{
+        if (!itemFile.exists()) {
+            try {
                 InputStream inputStream = getClassLoader().getResourceAsStream("items_list.txt");
                 OutputStream outputStream = new FileOutputStream(itemFile);
                 byte[] buffer = new byte[2048];
                 int length;
-                while((length = inputStream.read(buffer)) > 0){
+                while ((length = inputStream.read(buffer)) > 0) {
                     outputStream.write(buffer, 0, length);
                 }
                 outputStream.flush();
@@ -64,15 +63,10 @@ public final class BlockMain extends JavaPlugin {
     }
 
     @Override
-    public void onLoad() {
-        Bukkit.unloadWorld("world", false);
-        File worldDirectory = Bukkit.getWorldContainer();
-        this.deleteDirectory(new File(worldDirectory, "world"));
-        Bukkit.getLogger().info("Monde supprimé");
-        this.deleteDirectory(new File(worldDirectory, "world_nether"));
-        Bukkit.getLogger().info("Nether supprimé");
-        this.deleteDirectory(new File(worldDirectory, "world_the_end"));
-        Bukkit.getLogger().info("L'end supprimé");
+    public void onLoad(){
+        deleteDirectory(new File(Bukkit.getWorldContainer(), "world"));
+        deleteDirectory(new File(Bukkit.getWorldContainer(), "world_nether"));
+        deleteDirectory(new File(Bukkit.getWorldContainer(), "world_the_end"));
     }
 
     @Override

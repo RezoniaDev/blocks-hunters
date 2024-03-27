@@ -8,6 +8,7 @@ import fr.mrtayai.blocks.manager.Game;
 import fr.mrtayai.blocks.structures.Base;
 import fr.mrtayai.blocks.utils.TeamAreaUtils;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GameListener implements Listener {
@@ -32,6 +34,21 @@ public class GameListener implements Listener {
 
     public GameListener(Game game){
         this.game = game;
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event){
+        BlockPlayer blockPlayer = this.game.getPlayerManager().getBlockPlayer(event.getPlayer());
+        this.game.addPlayerInventory(event.getPlayer().getUniqueId(), event.getPlayer().getInventory());
+        if(blockPlayer == null){
+            return;
+        }
+        Team team = this.game.getTeamManager().getTeamPlayer(blockPlayer);
+        if(team == null){
+            return;
+        }
+        this.game.getScoreboardManager().removeBoard(event.getPlayer());
+
     }
 
     @EventHandler
@@ -132,8 +149,14 @@ public class GameListener implements Listener {
         if(this.game.getPhase().equals(GamePhase.GAME)){
             if(this.game.getPlayerManager().getBlockPlayer(event.getPlayer()) == null){
                 event.getPlayer().kick(Component.text("La partie a déjà commencé !"));
+                return;
             }
+            event.getPlayer().getInventory().setContents(this.game.getPlayerInventory(event.getPlayer().getUniqueId()).getContents());
+            this.game.removePlayerInventory(event.getPlayer().getUniqueId());
             this.game.getScoreboardManager().addBoard(event.getPlayer());
+            BlockPlayer blockPlayer = this.game.getPlayerManager().getBlockPlayer(event.getPlayer());
+            Team team = this.game.getTeamManager().getTeamPlayer(blockPlayer);
+            event.getPlayer().displayName(Component.text(event.getPlayer().getName()).color(team.getTextColor()));
         }
     }
 
@@ -147,6 +170,7 @@ public class GameListener implements Listener {
         BlockPlayer blockPlayer = this.game.getPlayerManager().getBlockPlayer(player);
         this.game.getStatsManager().getStatsPlayer(blockPlayer).addElementCrafted(event.getCurrentItem());
     }
+
 
     @EventHandler
     public void onPlayerPlaceBlock(BlockPlaceEvent event){
@@ -183,8 +207,8 @@ public class GameListener implements Listener {
             if(baseTeam.getGivenVillagerID().equals(villager.getUniqueId())) {
                 Player player = event.getPlayer();
                 ItemStack itemMainHand = player.getInventory().getItemInMainHand();
-                ItemStack itemPlugin = new ItemStack(itemMainHand);
-                itemPlugin.setAmount(1);
+                ItemStack itemPlugin = this.clearFishBuckets(itemMainHand);
+                Bukkit.getLogger().info("[BlocksPlugin] Item donné : " + itemPlugin.toString());
                 if (itemMainHand.getType().isAir()) {
                     return;
                 }
@@ -208,4 +232,33 @@ public class GameListener implements Listener {
             }
         }
     }
+
+    private ItemStack clearFishBuckets(ItemStack item){
+        switch(item.getType()){
+            case PUFFERFISH_BUCKET -> {
+                return new ItemStack(Material.PUFFERFISH_BUCKET, 1);
+            }
+            case TADPOLE_BUCKET -> {
+                return new ItemStack(Material.TADPOLE_BUCKET,1);
+            }
+            case AXOLOTL_BUCKET -> {
+                return new ItemStack(Material.AXOLOTL_BUCKET, 1);
+            }
+            case COD_BUCKET -> {
+                return new ItemStack(Material.COD_BUCKET, 1);
+            }
+            case SALMON_BUCKET -> {
+                return new ItemStack(Material.SALMON_BUCKET, 1);
+            }
+            case TROPICAL_FISH_BUCKET -> {
+                return new ItemStack(Material.TROPICAL_FISH_BUCKET, 1);
+            }
+            default -> {
+                ItemStack itemStack = new ItemStack(item);
+                itemStack.setAmount(1);
+                return itemStack;
+            }
+        }
+    }
+
 }

@@ -1,6 +1,5 @@
 package fr.mrtayai.blocks.commands;
 
-import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.BlockPlayer;
 import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.classes.Team;
@@ -28,7 +27,8 @@ public class CoordsCommand implements CommandExecutor {
             if(this.game.getPhase().equals(GamePhase.GAME)){
                 Team team = this.game.getTeamManager().getTeamPlayer(this.game.getPlayerManager().getBlockPlayer(sender));
                 for(BlockPlayer player : team.getPlayers()){
-                    player.getPlayer().sendMessage(Component.text("[BlocksTeam]").append(Component.text(" " + sender.getName() + " est aux coordonées ("+sender.getLocation().getBlockX()+", " + sender.getLocation().getBlockY() + ", " + sender.getLocation().getBlockZ()+")").color(NamedTextColor.BLUE)));
+                    player.getPlayer().sendMessage(Component.text("[BlocksTeam]").color(team.getTextColor())
+                            .append(Component.text(" " + sender.getName() + " est aux coordonées ("+sender.getLocation().getBlockX()+", " + sender.getLocation().getBlockY() + ", " + sender.getLocation().getBlockZ()+")")));
                 }
             }
         }else{

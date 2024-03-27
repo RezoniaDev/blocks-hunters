@@ -181,7 +181,17 @@ public class TeamCommand implements CommandExecutor {
                     player.sendMessage(Component.text(String.format("[Blocks] %s", e), NamedTextColor.RED));
                     return true;
                 }
+            }else if(Objects.equals(args[0], "info")) {
+                if(args.length != 2){
+                    sender.sendMessage(getHelpMessage(null, false));
+                    return true;
+                }
+                String playerName = args[1].toLowerCase(Locale.FRENCH);
+                BlockPlayer blockPlayer1 = this.game.getPlayerManager().getBlockPlayer(playerName);
+                Team team = this.game.getTeamManager().getTeamPlayer(blockPlayer1);
+                sender.sendMessage(Component.text(team.getDisplayName()));
             }
+
             sender.sendMessage(getHelpMessage(blockPlayer, false));
         }else{
             if(args.length == 0){
@@ -259,6 +269,15 @@ public class TeamCommand implements CommandExecutor {
                         sender.sendMessage(Component.text(String.format("[Blocks] %s", e), NamedTextColor.RED));
                         return true;
                     }
+                }else if(Objects.equals(args[0], "info")) {
+                    if(args.length != 2){
+                        sender.sendMessage(getHelpMessage(null, true));
+                        return true;
+                    }
+                    String playerName = args[1].toLowerCase(Locale.FRENCH);
+                    BlockPlayer player = this.game.getPlayerManager().getBlockPlayer(playerName);
+                    Team team = this.game.getTeamManager().getTeamPlayer(player);
+                    sender.sendMessage(Component.text("[Blocks] Le joueur " + playerName + " est dans l'équipe : " + team == null ? "aucune" : team.getDisplayName()));
                 }
             }
             sender.sendMessage(getHelpMessage(null, true));

@@ -1,7 +1,7 @@
 package fr.mrtayai.blocks.structures;
 
-import fr.mrtayai.blocks.manager.Game;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -12,14 +12,16 @@ import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class Base extends Structure{
 
 
     private UUID givenVillagerID;
+
+    private int x;
+    private int y;
+    private int z;
 
     private UUID listVillagerID;
 
@@ -32,16 +34,16 @@ public class Base extends Structure{
 
     @Override
     public void build(){
-        makeFloor(0);
+        this.makeFloor(0);
         for(int i = 1; i < 5; i++){
             placeMainPiece(i);
         }
-        makeWalls();
-        makeFloor(6);
-        placeLight();
-        placeOtherThings();
-        spawnVillagers();
-
+        this.makeWalls();
+        this.makeFloor(6);
+        this.placeLight();
+        this.placeOtherThings();
+        this.spawnVillagers();
+        this.forceChunkLoad();
     }
 
     private void makeFloor(int dy){
@@ -272,6 +274,17 @@ public class Base extends Structure{
 
     public UUID getListVillagerID() {
         return listVillagerID;
+    }
+
+    private void forceChunkLoad(){
+        Location firstLocation = new Location(Bukkit.getWorld("world"), this.x, this.y, this.z);
+        int xFirstChunk = firstLocation.getChunk().getX();
+        int zFirstChunk = firstLocation.getChunk().getZ();
+        for(int dx = 0; dx < 2; dx++){
+            for(int dz = 0; dz < 2; dz++){
+                Bukkit.getServer().getWorld("world").getChunkAt(xFirstChunk + dx, zFirstChunk + dz).setForceLoaded(true);
+            }
+        }
     }
 
 }

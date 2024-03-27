@@ -48,6 +48,7 @@ public class EndManager {
             player.kick(Component.text("Le plugin recharge un monde."), PlayerKickEvent.Cause.PLUGIN);;
         }
         stopListener();
+        Bukkit.getLogger().info("Le serveur redémarre");
         Bukkit.getServer().spigot().restart();
     }
 

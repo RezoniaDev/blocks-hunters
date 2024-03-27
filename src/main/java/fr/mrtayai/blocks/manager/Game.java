@@ -12,6 +12,7 @@ import fr.mrtayai.blocks.classes.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -32,6 +33,8 @@ public class Game {
 
     private Map<UUID, Team> teamsVillagers;
 
+    private Map<UUID, Inventory> playerInventories;
+
     private BlockMain main;
 
     private WaitingManager manager;
@@ -44,10 +47,14 @@ public class Game {
 
     private GamePhase phase;
 
+    private Random random;
+
 
     public Game(BlockMain main){
         this.main = main;
+        this.playerInventories = new HashMap<>();
         this.phase = GamePhase.GENERATION;
+        this.random = new Random();
         this.playerManager = new PlayerManager(this);
         this.teamsBases = new ArrayList<>();
         this.teamsVillagers = new HashMap<>();
@@ -129,8 +136,8 @@ public class Game {
 
 
     public void randomTeleport(Player player){
-        int randomX = (int) (Math.random() * (2000 - (-2000)) -2000);
-        int randomZ = (int) (Math.random() * (2000 - (-2000)) -2000);
+        int randomX = this.random.nextInt((10001 - (-10000) + 1)) - 10000;
+        int randomZ = this.random.nextInt((10001 - (-10000) + 1)) - 10000;
         int safeY = player.getWorld().getHighestBlockYAt(randomX, randomZ);
         Location location = new Location(this.getLobby().getLobbySpawnLoc().getWorld(), randomX, safeY + 1 , randomZ);
         this.loadChunks(location);
@@ -191,5 +198,23 @@ public class Game {
 
     public StatsManager getStatsManager() {
         return statsManager;
+    }
+
+    public boolean hasPlayerInventory(UUID playerUUID){
+        return this.playerInventories.containsKey(playerUUID);
+    }
+
+    public void addPlayerInventory(UUID playerUUID, Inventory inventory){
+        this.playerInventories.put(playerUUID, inventory);
+    }
+
+    public void removePlayerInventory(UUID playerUUID){
+        if(hasPlayerInventory(playerUUID)) {
+            this.playerInventories.remove(playerUUID);
+        }
+    }
+
+    public Inventory getPlayerInventory(UUID playerUUID) {
+        return this.playerInventories.get(playerUUID);
     }
 }

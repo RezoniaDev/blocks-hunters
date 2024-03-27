@@ -9,7 +9,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MusicInstrumentMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
@@ -34,6 +33,8 @@ public class ItemProvider implements Listener {
 
     private List<ItemStack> items;
 
+    private List<ItemStack> goatHorns;
+
     private void importMaterial(File file){
         InputStream input = null;
         try {
@@ -56,6 +57,9 @@ public class ItemProvider implements Listener {
             items.add(new ItemStack(Material.valueOf(material)));
         }
         items.addAll(this.potions);
+        if(this.untitled.getConfig().getBoolean("goat_horn.specific")){
+            items.addAll(this.goatHorns);
+        }
         this.items = items;
         this.numberItems = items.size();
 
@@ -158,7 +162,6 @@ public class ItemProvider implements Listener {
         addPotion(Material.POTION, PotionType.TURTLE_MASTER, true, false);
         addPotion(Material.POTION, PotionType.POISON, true, false);
         addPotion(Material.POTION, PotionType.FIRE_RESISTANCE, true, false);
-        addPotion(Material.POTION, PotionType.FIRE_RESISTANCE, true, false);
         addPotion(Material.POTION, PotionType.WATER_BREATHING, true, false);
         addPotion(Material.POTION, PotionType.NIGHT_VISION, true, false);
         addPotion(Material.POTION, PotionType.SLOW_FALLING, true, false);
@@ -176,7 +179,6 @@ public class ItemProvider implements Listener {
         addPotion(Material.POTION, PotionType.POISON, false, true);
         addPotion(Material.POTION, PotionType.INSTANT_HEAL, false, true);
         addPotion(Material.POTION, PotionType.INSTANT_DAMAGE, false, true);
-        addPotion(Material.POTION, PotionType.FIRE_RESISTANCE, false, true);
     }
 
     private void addSplashPotion(){
@@ -228,7 +230,6 @@ public class ItemProvider implements Listener {
         addPotion(Material.SPLASH_POTION, PotionType.POISON, false, true);
         addPotion(Material.SPLASH_POTION, PotionType.INSTANT_HEAL, false, true);
         addPotion(Material.SPLASH_POTION, PotionType.INSTANT_DAMAGE, false, true);
-        addPotion(Material.SPLASH_POTION, PotionType.FIRE_RESISTANCE, false, true);
     }
 
     private void addLingeringPotion(){
@@ -280,7 +281,6 @@ public class ItemProvider implements Listener {
         addPotion(Material.LINGERING_POTION, PotionType.POISON, false, true);
         addPotion(Material.LINGERING_POTION, PotionType.INSTANT_HEAL, false, true);
         addPotion(Material.LINGERING_POTION, PotionType.INSTANT_DAMAGE, false, true);
-        addPotion(Material.LINGERING_POTION, PotionType.FIRE_RESISTANCE, false, true);
     }
 
     private void addTippedArrow(){
@@ -332,7 +332,6 @@ public class ItemProvider implements Listener {
         addPotion(Material.TIPPED_ARROW, PotionType.POISON, false, true);
         addPotion(Material.TIPPED_ARROW, PotionType.INSTANT_HEAL, false, true);
         addPotion(Material.TIPPED_ARROW, PotionType.INSTANT_DAMAGE, false, true);
-        addPotion(Material.TIPPED_ARROW, PotionType.FIRE_RESISTANCE, false, true);
     }
 
 
@@ -347,54 +346,56 @@ public class ItemProvider implements Listener {
     public void addGoatHorns(){
         if(this.materials.contains("GOAT_HORN")) {
             if(this.untitled.getConfig().getBoolean("goat_horn.specific")){
+                this.goatHorns = new ArrayList<>();
                 this.materials.remove("GOAT_HORN");
+
                 ItemStack goatHorn1 = new ItemStack(Material.GOAT_HORN);
                 MusicInstrumentMeta horn1Meta = (MusicInstrumentMeta) goatHorn1.getItemMeta();
                 horn1Meta.setInstrument(MusicInstrument.ADMIRE);
                 goatHorn1.setItemMeta(horn1Meta);
-                this.items.add(goatHorn1);
+                this.goatHorns.add(goatHorn1);
 
                 ItemStack goatHorn2 = new ItemStack(Material.GOAT_HORN);
                 MusicInstrumentMeta horn2Meta = (MusicInstrumentMeta) goatHorn2.getItemMeta();
                 horn2Meta.setInstrument(MusicInstrument.CALL);
                 goatHorn2.setItemMeta(horn2Meta);
-                this.items.add(goatHorn2);
+                this.goatHorns.add(goatHorn2);
 
                 ItemStack goatHorn3 = new ItemStack(Material.GOAT_HORN);
                 MusicInstrumentMeta horn3Meta = (MusicInstrumentMeta) goatHorn3.getItemMeta();
                 horn3Meta.setInstrument(MusicInstrument.FEEL);
                 goatHorn3.setItemMeta(horn3Meta);
-                this.items.add(goatHorn3);
+                this.goatHorns.add(goatHorn3);
 
                 ItemStack goatHorn4 = new ItemStack(Material.GOAT_HORN);
                 MusicInstrumentMeta horn4Meta = (MusicInstrumentMeta) goatHorn4.getItemMeta();
                 horn4Meta.setInstrument(MusicInstrument.DREAM);
                 goatHorn4.setItemMeta(horn4Meta);
-                this.items.add(goatHorn4);
+                this.goatHorns.add(goatHorn4);
 
                 ItemStack goatHorn5 = new ItemStack(Material.GOAT_HORN);
                 MusicInstrumentMeta horn5Meta = (MusicInstrumentMeta) goatHorn5.getItemMeta();
                 horn5Meta.setInstrument(MusicInstrument.PONDER);
                 goatHorn5.setItemMeta(horn5Meta);
-                this.items.add(goatHorn5);
+                this.goatHorns.add(goatHorn5);
 
                 ItemStack goatHorn6 = new ItemStack(Material.GOAT_HORN);
                 MusicInstrumentMeta horn6Meta = (MusicInstrumentMeta) goatHorn6.getItemMeta();
                 horn6Meta.setInstrument(MusicInstrument.SEEK);
                 goatHorn6.setItemMeta(horn6Meta);
-                this.items.add(goatHorn6);
+                this.goatHorns.add(goatHorn6);
 
                 ItemStack goatHorn7 = new ItemStack(Material.GOAT_HORN);
                 MusicInstrumentMeta horn7Meta = (MusicInstrumentMeta) goatHorn7.getItemMeta();
                 horn7Meta.setInstrument(MusicInstrument.SING);
                 goatHorn7.setItemMeta(horn7Meta);
-                this.items.add(goatHorn7);
+                this.goatHorns.add(goatHorn7);
 
                 ItemStack goatHorn8 = new ItemStack(Material.GOAT_HORN);
                 MusicInstrumentMeta horn8Meta = (MusicInstrumentMeta) goatHorn8.getItemMeta();
                 horn8Meta.setInstrument(MusicInstrument.YEARN);
                 goatHorn8.setItemMeta(horn8Meta);
-                this.items.add(goatHorn8);
+                this.goatHorns.add(goatHorn8);
                 }
         }
     }

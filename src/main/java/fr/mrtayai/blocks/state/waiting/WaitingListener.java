@@ -5,7 +5,6 @@ import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.classes.StatsPlayer;
 import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.manager.Game;
-import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -21,7 +20,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
 
 public class WaitingListener implements Listener {
 
@@ -49,6 +47,7 @@ public class WaitingListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         if(this.game.getPhase().equals(GamePhase.WAITING)){
+            Bukkit.getLogger().info("test");
             this.game.getStatsManager().removeStatsPlayer(this.game.getPlayerManager().getBlockPlayer(event.getPlayer()));
             this.game.getPlayerManager().removePlayer(event.getPlayer());
             event.getPlayer().getInventory().clear();
@@ -102,7 +101,7 @@ public class WaitingListener implements Listener {
                     this.game.getTeamManager().addPlayerToTeam(this.game.getPlayerManager().getBlockPlayer(player), team);
                     break;
                 default:
-                    break;
+                    return;
             }
         } catch (Exception e) {
             Bukkit.getLogger().info(e.getMessage());

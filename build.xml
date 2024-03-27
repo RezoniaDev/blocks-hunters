@@ -4,7 +4,7 @@
         <ftp server="loulou"
              userid="quentin"
              password="Quentin26790*"
-             remoteDir="/home/quentin/test_server/plugins"
+             remoteDir="/home/quentin/test_server3/plugins"
              binary="yes"
              passive="yes">
             <fileset dir="${basedir}/target">

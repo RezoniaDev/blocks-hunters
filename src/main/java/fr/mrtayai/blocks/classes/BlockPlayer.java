@@ -1,5 +1,6 @@
 package fr.mrtayai.blocks.classes;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,28 +11,28 @@ import java.util.UUID;
 
 public class BlockPlayer {
 
-    private Player player;
+    private UUID playerUUID;
 
     private Location previousLocation;
 
     private List<ItemStack> itemsCollected;
 
     public BlockPlayer(Player player){
-        this.player = player;
+        this.playerUUID = player.getUniqueId();
         this.itemsCollected = new ArrayList<>();
         this.previousLocation = null;
     }
 
     public Player getPlayer() {
-        return this.player;
+        return Bukkit.getServer().getPlayer(this.playerUUID);
     }
 
     public UUID getPlayerUUID(){
-        return this.player.getUniqueId();
+        return this.playerUUID;
     }
 
     public void setPlayer(Player player) {
-        this.player = player;
+        this.playerUUID = player.getUniqueId();
     }
 
 

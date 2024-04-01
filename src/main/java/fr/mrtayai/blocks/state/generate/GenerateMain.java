@@ -1,18 +1,12 @@
 package fr.mrtayai.blocks.state.generate;
 
-import fr.mrtayai.blocks.BlockMain;
 import fr.mrtayai.blocks.classes.GamePhase;
 import fr.mrtayai.blocks.manager.Game;
 import fr.mrtayai.blocks.state.waiting.WaitingManager;
-import fr.mrtayai.blocks.structures.Lobby;
 import fr.mrtayai.blocks.utils.LobbyAreaUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.WorldCreator;
 import org.bukkit.event.HandlerList;
-
-import java.io.File;
 
 public class GenerateMain {
 

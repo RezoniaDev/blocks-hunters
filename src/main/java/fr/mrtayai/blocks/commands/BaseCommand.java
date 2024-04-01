@@ -27,9 +27,9 @@ public class BaseCommand implements CommandExecutor {
                     this.game.getPlayerManager().changeLastLocation(player, player.getPlayer().getLocation());
                 }
                 player.getPlayer().teleport(this.game.getTeamBase(player).getTeamSpawn());
-                this.game.loadChunks(player.getPlayer().getLocation());
-                player.getPlayer().addPotionEffect(this.game.getSaturation());
                 player.getPlayer().setSaturation(5);
+                player.getPlayer().setFoodLevel(20);
+                player.getPlayer().setHealth(20);
                 player.getPlayer().sendMessage(Component.text("[Blocks] Téléportation à la base"));
                 return true;
             }

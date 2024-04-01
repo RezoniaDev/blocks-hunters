@@ -32,12 +32,14 @@ public class GameRunnable implements Runnable{
                                 .append(Component.text(formatSecondsToHHMMSS(timer)))
                                 .append(Component.text(" !"))
                 );
-                this.game.setFinalTime(timer);
+                Bukkit.getLogger().info(String.valueOf(timer));
                 this.gameManager.stop();
             }
         }
-
-        timer++;
+        if(!this.game.isPaused()){
+            timer++;
+            this.game.setFinalTime(timer);
+        }
     }
 
     private static String formatSecondsToHHMMSS(int seconds) {

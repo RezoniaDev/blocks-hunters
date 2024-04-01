@@ -94,6 +94,7 @@ public class StatsManager {
     private JsonObject getPlayerJSON(BlockPlayer player){
         JsonObject playerObject = new JsonObject();
         StatsPlayer statsPlayer = this.game.getStatsManager().getStatsPlayer(player);
+//        // statsPlayer.collectStatistics();
         playerObject.addProperty("team", this.game.getTeamManager().getTeamPlayer(player).getName());
         JsonObject collected = new JsonObject();
         collected.addProperty("number", player.getItemsCollected().size());
@@ -110,6 +111,14 @@ public class StatsManager {
         playerObject.add("blocksCrafted", blocksCrafted);
         playerObject.add("blocksBreaked", blocksBreaked);
         playerObject.add("blocksPickup", blocksPickup);
+//        JsonArray stats = new JsonArray();
+//        Map<String, Integer> statsMap = statsPlayer.getStats();
+//        for(String element : statsMap.keySet()){
+//            Integer value = statsMap.get(element);
+//            JsonObject object = new JsonObject();
+//            collected.addProperty(element, value);
+//            stats.add(object);
+//        }
         return playerObject;
     }
 

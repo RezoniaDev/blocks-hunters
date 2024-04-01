@@ -28,7 +28,7 @@ public class CoordsCommand implements CommandExecutor {
                 Team team = this.game.getTeamManager().getTeamPlayer(this.game.getPlayerManager().getBlockPlayer(sender));
                 for(BlockPlayer player : team.getPlayers()){
                     player.getPlayer().sendMessage(Component.text("[BlocksTeam]").color(team.getTextColor())
-                            .append(Component.text(" " + sender.getName() + " est aux coordonées ("+sender.getLocation().getBlockX()+", " + sender.getLocation().getBlockY() + ", " + sender.getLocation().getBlockZ()+")")));
+                            .append(Component.text(" " + sender.getName() + " est aux coordonées ("+sender.getLocation().getBlockX()+", " + sender.getLocation().getBlockY() + ", " + sender.getLocation().getBlockZ()+")").color(NamedTextColor.WHITE)));
                 }
             }
         }else{

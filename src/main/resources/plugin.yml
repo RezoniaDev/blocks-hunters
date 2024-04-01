@@ -26,3 +26,15 @@ commands:
     description: Permet de se téléporter au lobby
   coords:
     description: Permet de donner ses coordonnées à ses amis
+  join:
+    description: Permet d'ajouter un joueur à la partie actuelle
+  stop:
+    description: Permet d'arrêter la partie
+    permission: blocks.stop
+  pause:
+    description: Mettre en pause la partie
+  unpause:
+    description: Reprendre une partie arretée
+  stopserver:
+    description: Remplace la commande /stop
+    permission: blocks.stopserver

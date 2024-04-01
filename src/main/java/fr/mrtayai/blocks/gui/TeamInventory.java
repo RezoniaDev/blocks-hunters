@@ -1,6 +1,7 @@
 package fr.mrtayai.blocks.gui;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -10,10 +11,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class TeamInventory {
 
@@ -152,15 +150,35 @@ public class TeamInventory {
                 if(inv.getItem(i) != null) {
                     if (inv.getItem(i).equals(itemCollected)) {
                         itemCollected.addUnsafeEnchantment(Enchantment.LUCK, 1);
+                        itemCollected.lore(List.of(Component.text("Element déjà récupéré").decorate(TextDecoration.ITALIC)));
                         ItemMeta itemMeta = itemCollected.getItemMeta();
                         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
                         itemCollected.setItemMeta(itemMeta);
+                        for(int y = 0; y < this.items.size(); y++){
+                            if(this.items.get(y).equals(inv.getItem(i))){
+                                this.items.set(y, itemCollected);
+                            }
+                        }
                         inv.setItem(i, itemCollected);
+                        this.filterInventories();
                     }
                 }
             }
         }
+    }
+
+    private void filterInventories(){
+        List<ItemStack> itemsFunction = new ArrayList<>(this.items);
+        List<ItemStack> filteredItem = itemsFunction.stream()
+                .filter(item -> item.containsEnchantment(Enchantment.LUCK))
+                .sorted(Comparator.comparing(ItemStack::getType))
+                .toList();
+        itemsFunction.removeAll(filteredItem);
+        itemsFunction.addAll(filteredItem);
+        this.inventories = this.createCleanInventory(this.numberInventories);
+        this.items = itemsFunction;
+        this.fillInventories();
     }
 
     public boolean containsInventory(Inventory inventory){

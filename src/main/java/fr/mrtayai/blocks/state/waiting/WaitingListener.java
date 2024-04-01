@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -39,15 +40,21 @@ public class WaitingListener implements Listener {
             event.getPlayer().setGameMode(GameMode.SURVIVAL);
             this.game.getScoreboardManager().addBoard(event.getPlayer());
             event.getPlayer().getInventory().clear();
-            event.getPlayer().addPotionEffect(this.game.getSaturation());
+            event.getPlayer().setFoodLevel(20);
             event.getPlayer().getInventory().setItem(4, this.game.getWaitingManager().getTeamChooser());
+        }
+    }
+
+    @EventHandler
+    public void onFoodLevelChange(FoodLevelChangeEvent event){
+        if(event.getEntity() instanceof Player){
+            event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         if(this.game.getPhase().equals(GamePhase.WAITING)){
-            Bukkit.getLogger().info("test");
             this.game.getStatsManager().removeStatsPlayer(this.game.getPlayerManager().getBlockPlayer(event.getPlayer()));
             this.game.getPlayerManager().removePlayer(event.getPlayer());
             event.getPlayer().getInventory().clear();

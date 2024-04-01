@@ -7,3 +7,9 @@ potions:
   tipped_arrow: true
 goat_horn:
   specific: true
+dimension:
+  nether: true
+  end: true
+enchanting_table: true
+ekalia:
+  recipes: true

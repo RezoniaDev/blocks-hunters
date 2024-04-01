@@ -5,8 +5,10 @@ import fr.mrtayai.blocks.classes.Team;
 import fr.mrtayai.blocks.gui.TeamInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -16,12 +18,23 @@ public class TeamManager {
 
     private Map<Team, TeamInventory> teamInventories;
 
+    private ItemStack itemSuivant = new ItemStack(Material.GOLD_INGOT);
+    private ItemStack itemPrevious = new ItemStack(Material.ARROW);
     private Map<Double, UUID> scorePerTeam = new HashMap<Double, UUID>();
 
     public TeamManager(Game game){
         this.game = game;
         this.teams = new ArrayList<>();
         this.teamInventories = new HashMap<>();
+    }
+
+    private void modifyArrow() {
+        ItemMeta itemMeta = this.itemSuivant.getItemMeta();
+        itemMeta.displayName(Component.text("Page suivante"));
+        this.itemSuivant.setItemMeta(itemMeta);
+        ItemMeta itemMeta1 = this.itemPrevious.getItemMeta();
+        itemMeta1.displayName(Component.text("Page précédente"));
+        this.itemPrevious.setItemMeta(itemMeta1);
     }
 
     public boolean isInATeam(BlockPlayer player){
@@ -142,6 +155,16 @@ public class TeamManager {
         throw new Exception("No team with the name isn't exists");
     }
 
+    public void removeTeam(Team teamToDelete) throws Exception {
+        for(Team team : teams){
+            if(team.getTeamID().equals(teamToDelete.getTeamID())){
+                this.teams.remove(team);
+                this.teamInventories.remove(team);
+            }
+        }
+        throw new Exception("No team with the name isn't exists");
+    }
+
     public void addTeam(Team team) throws Exception {
         for(Team teamLoop : this.teams){
            if(Objects.equals(teamLoop.getName(), team.getName())){
@@ -176,9 +199,7 @@ public class TeamManager {
         return this.teamInventories.get(team);
     }
 
-    public void removeEmptyTeams(){
-        this.teams.removeIf(team -> team.getPlayers().isEmpty());
-    }
+    public void removeEmptyTeams() { this.teams.removeIf(team -> team.getPlayers().isEmpty());    }
 
     public boolean hasTeam(Team team){
         return this.teams.contains(team);
@@ -237,6 +258,14 @@ public class TeamManager {
         return this.scorePerTeam;
     }
 
+
+    public ItemStack getItemSuivant() {
+        return this.itemSuivant;
+    }
+
+    public ItemStack getItemPrevious() {
+        return this.itemPrevious;
+    }
 
 
 }

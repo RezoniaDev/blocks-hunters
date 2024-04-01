@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -45,7 +44,8 @@ public class EndManager {
     public void stopEnding(){
         this.stopRunnable();
         for(Player player : Bukkit.getServer().getOnlinePlayers()){
-            player.kick(Component.text("Le plugin recharge un monde."), PlayerKickEvent.Cause.PLUGIN);;
+            player.teleport(this.game.getLobby().getLobbySpawnLoc());
+            player.sendMessage(Component.text("Le serveur regénère un monde !"));
         }
         stopListener();
         Bukkit.getLogger().info("Le serveur redémarre");

@@ -9,7 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class FarmCommand implements CommandExecutor {
@@ -31,7 +30,6 @@ public class FarmCommand implements CommandExecutor {
             if(this.game.getTeamBase(player).getArea().isInArea(player.getPlayer().getLocation())) {
                 player.getPlayer().teleport(player.getPreviousLocation());
                 this.game.loadChunks(player.getPlayer().getLocation());
-                player.getPlayer().removePotionEffect(PotionEffectType.SATURATION);
                 player.getPlayer().setSaturation(5);
                 player.getPlayer().sendMessage(Component.text("[Blocks] Téléportation au farm"));
                 return true;

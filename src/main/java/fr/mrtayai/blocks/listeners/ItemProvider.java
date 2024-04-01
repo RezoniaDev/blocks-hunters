@@ -399,6 +399,12 @@ public class ItemProvider implements Listener {
                 }
         }
     }
+
+    private void removeNetherItems(){
+
+    }
+
+
 }
 
 

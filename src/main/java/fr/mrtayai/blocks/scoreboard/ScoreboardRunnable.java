@@ -31,14 +31,17 @@ public class ScoreboardRunnable implements Runnable {
     public void run() {
 
         for(FastBoard board : this.manager.getBoards().values()){
-            if (this.game.getPhase().equals(GamePhase.WAITING)) {
-                changeWaitingBoard(board);
-                timer=0;
-            } else if (this.game.getPhase().equals(GamePhase.GAME)) {
-                changeGameBoard(board, timer);
-            } else if (this.game.getPhase().equals(GamePhase.END)){
-                changeEndBoard(board);
+            if(board.getPlayer() != null){
+                if (this.game.getPhase().equals(GamePhase.WAITING)) {
+                    changeWaitingBoard(board);
+                    timer=0;
+                } else if (this.game.getPhase().equals(GamePhase.GAME)) {
+                    changeGameBoard(board, timer);
+                } else if (this.game.getPhase().equals(GamePhase.END)){
+                    changeEndBoard(board);
+                }
             }
+
         }
         timer++;
     }
@@ -72,9 +75,15 @@ public class ScoreboardRunnable implements Runnable {
         BlockPlayer player = this.game.getPlayerManager().getBlockPlayer(board.getPlayer());
         Team team =this.game.getTeamManager().getTeamPlayer(player);
         board.updateTitle(Component.text("Blocks", NamedTextColor.GOLD));
+        String gameState = "Etat du jeu : ";
+        if(this.game.isPaused()){
+            gameState += "En pause";
+        }else{
+            gameState += "En jeu";
+        }
         board.updateLines(
                 Component.text(""),
-                Component.text("Etat du jeu : En jeu"),
+                Component.text(gameState),
                 Component.text(""),
                 Component.text("Durée de jeu : " + formatSecondsToHHMMSS(timer)),
                 Component.text(""),
@@ -128,7 +137,7 @@ public class ScoreboardRunnable implements Runnable {
         Component teamComponent = Component.text("Equipe ")
                 .append(Component.text(team.getDisplayName()).color(team.getTextColor()))
                 .append(Component.text(" | Pourcentage : "))
-                .append(Component.text(team.getPercent()))
+                .append(Component.text(String.format("%.2f", team.getPercent())))
                 .append(Component.text(" %"));
         return teamComponent;
     }

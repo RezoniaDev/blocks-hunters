@@ -9,8 +9,9 @@ import fr.mrtayai.blocks.structures.Lobby;
 import fr.mrtayai.blocks.utils.LobbyAreaUtils;
 import fr.mrtayai.blocks.utils.TeamAreaUtils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -18,8 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
 
 public class WaitingManager {
 
@@ -46,6 +46,7 @@ public class WaitingManager {
         this.scheduler = Bukkit.getScheduler();
         this.registerListeners();
         this.launchWaitingRunnable();
+
         /* Création de l'équipe rouge */
         Team redTeam = new Team("red", "Rouge",Color.RED);
         redTeam.setItemsToCollect(new ArrayList<>(this.game.getMain().getItems()));
@@ -55,7 +56,7 @@ public class WaitingManager {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        TeamAreaUtils redTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 300, 20000, redTeam.getTeamID());
+        TeamAreaUtils redTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 300, 20000, redTeam.getTeamID(), this.game);
         this.game.addTeamBase(redTeamUtils);
 
         /* Création de l'équipe verte */
@@ -67,7 +68,7 @@ public class WaitingManager {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        TeamAreaUtils greenTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), -20000, 300, 20000, greenTeam.getTeamID());
+        TeamAreaUtils greenTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), -20000, 300, 20000, greenTeam.getTeamID(), this.game);
         this.game.addTeamBase(greenTeamUtils);
 
         /* Création de l'équipe bleue */
@@ -79,7 +80,7 @@ public class WaitingManager {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        TeamAreaUtils blueTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 300, -20000, blueTeam.getTeamID());
+        TeamAreaUtils blueTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), 20000, 300, -20000, blueTeam.getTeamID(), this.game);
         this.game.addTeamBase(blueTeamUtils);
 
         /* Création de l'équipe jaune */
@@ -91,7 +92,7 @@ public class WaitingManager {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        TeamAreaUtils yellowTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), -20000, 300, -20000, yellowTeam.getTeamID());
+        TeamAreaUtils yellowTeamUtils = new TeamAreaUtils(this.game.getLobby().getLobbySpawnLoc().getWorld(), -20000, 300, -20000, yellowTeam.getTeamID(), this.game);
         this.game.addTeamBase(yellowTeamUtils);
         this.teamChooser = this.createTeamChooser();
         this.chooseInventory = this.createChooseInventory();
@@ -113,9 +114,9 @@ public class WaitingManager {
     }
 
     public void stopWaitingState(){
+        Bukkit.broadcast(Component.text("[Blocks] Le plugin est en train de charger !"));
         unregisterListeners();
         stopWaitingRunnable();
-        this.game.getTeamManager().removeEmptyTeams();
         this.game.prepareTeamBases();
         new GameManager(this.game).start();
         this.game.setPhase(GamePhase.GAME);

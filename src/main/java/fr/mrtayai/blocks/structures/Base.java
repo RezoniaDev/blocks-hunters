@@ -25,11 +25,14 @@ public class Base extends Structure{
 
     private UUID listVillagerID;
 
-    public Base(int x, int y, int z, World world){
+    private boolean enchantingTable;
+
+    public Base(int x, int y, int z, World world, boolean enchantingTable){
         this.x = x;
         this.y = y;
         this.z = z;
         this.world = world;
+        this.enchantingTable = enchantingTable;
     }
 
     @Override
@@ -128,11 +131,11 @@ public class Base extends Structure{
 
 
         org.bukkit.block.data.type.Chest firstChestData = (org.bukkit.block.data.type.Chest) firstBlock.getBlockData();
-        firstChestData.setType(Chest.Type.RIGHT);
+        firstChestData.setType(Chest.Type.LEFT);
         firstBlock.setBlockData(firstChestData);
 
         org.bukkit.block.data.type.Chest secondChestData = (org.bukkit.block.data.type.Chest) secondBlock.getBlockData();
-        secondChestData.setType(Chest.Type.LEFT);
+        secondChestData.setType(Chest.Type.RIGHT);
         secondBlock.setBlockData(secondChestData);
 
     }
@@ -187,45 +190,21 @@ public class Base extends Structure{
         place(11, 3, 7, Material.ANVIL);
         place(11, 4, 7, Material.ANVIL);
 
-        place(7, 1, 1, Material.BOOKSHELF);
-        place(8, 1, 1, Material.BOOKSHELF);
-        place(9, 1, 1, Material.BOOKSHELF);
-        place(10, 1, 1, Material.BOOKSHELF);
-        place(11, 1, 1, Material.BOOKSHELF);
-
         place(1, 1, 2, Material.OAK_PLANKS);
         place(2,1, 2, Material.OAK_PLANKS);
-        place(7, 1, 2, Material.BOOKSHELF);
-        place(11, 1, 2, Material.BOOKSHELF);
 
         place(2,1, 3, Material.OAK_PLANKS);
-        place(7, 1, 3, Material.BOOKSHELF);
-        place(9, 1, 3, Material.ENCHANTING_TABLE);
-        place(11, 1, 3, Material.BOOKSHELF);
 
         place(1, 1, 4, Material.OAK_PLANKS);
         place(2,1, 4, Material.OAK_PLANKS);
-        place(7, 1, 4, Material.BOOKSHELF);
-        place(11, 1, 4, Material.BOOKSHELF);
 
         place(2,1, 5, Material.OAK_PLANKS);
 
         place(1, 1, 6, Material.OAK_PLANKS);
         place(2,1, 6, Material.OAK_PLANKS);
 
-        place(7, 2, 1, Material.BOOKSHELF);
-        place(8, 2, 1, Material.BOOKSHELF);
-        place(9, 2, 1, Material.BOOKSHELF);
-        place(10, 2, 1, Material.BOOKSHELF);
-        place(11, 2, 1, Material.BOOKSHELF);
-
         place(1, 2, 2, Material.OAK_PLANKS);
         place(2,2, 2, Material.OAK_PLANKS);
-        place(7, 2, 2, Material.BOOKSHELF);
-        place(11, 2, 2, Material.BOOKSHELF);
-
-        place(7, 2, 3, Material.BOOKSHELF);
-        place(11, 2, 3, Material.BOOKSHELF);
 
         place(1, 2, 4, Material.OAK_PLANKS);
         place(2,2, 4, Material.OAK_PLANKS);
@@ -245,6 +224,40 @@ public class Base extends Structure{
 
         place(1, 3, 6, Material.OAK_PLANKS);
         place(2,3, 6, Material.OAK_PLANKS);
+
+        if(this.enchantingTable){
+            this.placeEnchantingTable();
+        }
+    }
+
+    private void placeEnchantingTable(){
+        place(7, 1, 1, Material.BOOKSHELF);
+        place(8, 1, 1, Material.BOOKSHELF);
+        place(9, 1, 1, Material.BOOKSHELF);
+        place(10, 1, 1, Material.BOOKSHELF);
+        place(11, 1, 1, Material.BOOKSHELF);
+
+        place(7, 1, 2, Material.BOOKSHELF);
+        place(11, 1, 2, Material.BOOKSHELF);
+
+        place(7, 1, 3, Material.BOOKSHELF);
+        place(9, 1, 3, Material.ENCHANTING_TABLE);
+        place(11, 1, 3, Material.BOOKSHELF);
+
+        place(7, 1, 4, Material.BOOKSHELF);
+        place(11, 1, 4, Material.BOOKSHELF);
+
+        place(7, 2, 1, Material.BOOKSHELF);
+        place(8, 2, 1, Material.BOOKSHELF);
+        place(9, 2, 1, Material.BOOKSHELF);
+        place(10, 2, 1, Material.BOOKSHELF);
+        place(11, 2, 1, Material.BOOKSHELF);
+
+        place(7, 2, 2, Material.BOOKSHELF);
+        place(11, 2, 2, Material.BOOKSHELF);
+
+        place(7, 2, 3, Material.BOOKSHELF);
+        place(11, 2, 3, Material.BOOKSHELF);
     }
 
     private void spawnVillagers(){

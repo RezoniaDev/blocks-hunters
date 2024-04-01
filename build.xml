@@ -8,7 +8,7 @@
              binary="yes"
              passive="yes">
             <fileset dir="${basedir}/target">
-                <include name="Blocks-1.0-SNAPSHOT.jar"/>
+                <include name="Blocks-0.5-SNAPSHOT.jar"/>
 
             </fileset>
         </ftp>

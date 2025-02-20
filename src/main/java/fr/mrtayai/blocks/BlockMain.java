@@ -8,6 +8,7 @@ import fr.mrtayai.blocks.utils.LobbyAreaUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.popcraft.chunky.api.ChunkyAPI;
 
 import java.io.*;
 import java.util.List;
@@ -21,6 +22,8 @@ public final class BlockMain extends JavaPlugin {
     private LobbyAreaUtils lobby;
 
     private List<ItemStack> items;
+
+    private ChunkyAPI chunkyAPI;
 
     @Override
     public void onEnable() {
@@ -52,6 +55,8 @@ public final class BlockMain extends JavaPlugin {
 
         this.items = this.gui.getItemsList();
 
+        this.chunkyAPI = Bukkit.getServer().getServicesManager().load(ChunkyAPI.class);
+
         this.game = new Game(this);
         this.game.setLobby(this.lobby);
         this.game.start();
@@ -78,9 +83,9 @@ public final class BlockMain extends JavaPlugin {
 
     @Override
     public void onLoad(){
-        deleteDirectory(new File(Bukkit.getWorldContainer(), "world"));
-        deleteDirectory(new File(Bukkit.getWorldContainer(), "world_nether"));
-        deleteDirectory(new File(Bukkit.getWorldContainer(), "world_the_end"));
+        //deleteDirectory(new File(Bukkit.getWorldContainer(), "world"));
+        //deleteDirectory(new File(Bukkit.getWorldContainer(), "world_nether"));
+        //deleteDirectory(new File(Bukkit.getWorldContainer(), "world_the_end"));
     }
 
     @Override
@@ -107,6 +112,9 @@ public final class BlockMain extends JavaPlugin {
         return directoryToBeDeleted.delete();
     }
 
+    public ChunkyAPI getChunkyAPI() {
+        return chunkyAPI;
+    }
 
     public void setLobby(LobbyAreaUtils lobby){
         this.lobby = lobby;

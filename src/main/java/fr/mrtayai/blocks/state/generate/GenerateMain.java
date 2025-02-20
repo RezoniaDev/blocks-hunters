@@ -7,6 +7,7 @@ import fr.mrtayai.blocks.utils.LobbyAreaUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
+import org.popcraft.chunky.api.ChunkyAPI;
 
 public class GenerateMain {
 
@@ -29,6 +30,9 @@ public class GenerateMain {
     private void startListener(){
         this.listener = new GenerateListeners(this.game);
         Bukkit.getServer().getPluginManager().registerEvents(listener, this.game.getMain());
+        ChunkyAPI chunky = this.game.getMain().getChunkyAPI();
+        chunky.startTask("world", "square1", 0, 0, 5000, 5000, "pattern");
+        chunky.onGenerationComplete(eventV -> this.stopGenerate());
     }
 
     private void stopListener(){

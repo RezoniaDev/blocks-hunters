@@ -12,7 +12,7 @@
     <name>minecraft-blocks</name>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>23</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -95,6 +95,10 @@
 
     <repositories>
         <repository>
+            <id>codemc</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
             <id>papermc-repo</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
@@ -142,6 +146,11 @@
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.popcraft</groupId>
+            <artifactId>chunky-common</artifactId>
+            <version>1.4.29</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

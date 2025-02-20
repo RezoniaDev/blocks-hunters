@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.world.WorldLoadEvent;
+import org.popcraft.chunky.api.ChunkyAPI;
 
 public class GenerateListeners implements Listener {
 
@@ -28,7 +29,6 @@ public class GenerateListeners implements Listener {
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event){
         Bukkit.getLogger().info("[Blocks] Le monde a fini de chargé !");
-        this.game.getGenerationManager().stopGenerate();
     }
 
 }
